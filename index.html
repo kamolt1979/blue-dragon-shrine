@@ -68,6 +68,18 @@
     .divine-wheel-rotor { transition: transform 2.2s cubic-bezier(0.16, 1, 0.3, 1); transform-origin: center center; }
     .divine-windmill-rotor { transition: transform 2.35s cubic-bezier(0.14, 0.86, 0.25, 1); transform-origin: center center; }
 
+    /* Progressive 7-Tier Shrine Luxury Surfaces (Unified Crimson & Imperial Gold) */
+    .luxury-rays-tier6 {
+      background: repeating-conic-gradient(from 0deg, rgba(251, 191, 36, 0.14) 0deg 10deg, transparent 10deg 22deg);
+      -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,0.95) 28%, transparent 72%);
+      mask-image: radial-gradient(circle, rgba(0,0,0,0.95) 28%, transparent 72%);
+    }
+    .luxury-rays-tier7 {
+      background: repeating-conic-gradient(from 6deg, rgba(253, 224, 71, 0.24) 0deg 8deg, rgba(245, 158, 11, 0.05) 8deg 18deg, transparent 18deg 24deg);
+      -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 30%, transparent 74%);
+      mask-image: radial-gradient(circle, rgba(0,0,0,1) 30%, transparent 74%);
+    }
+
     .thin-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
     .thin-scroll::-webkit-scrollbar-track { background: transparent; }
     .thin-scroll::-webkit-scrollbar-thumb { background: rgba(180, 120, 60, 0.35); border-radius: 9999px; }
@@ -291,17 +303,18 @@
                     </div>
                   </div>
 
-                  <!-- FLOOR LOCKED VIEW (When Floor 2 is not yet unlocked) -->
-                  <div id="floor-locked-view" class="hidden space-y-3">
-                    <!-- Populated by JS -->
-                  </div>
+                  <!-- FLOOR LOCKED VIEW (Reserved container; active hall below now showcases Floors 1..7) -->
+                  <div id="floor-locked-view" class="hidden"></div>
 
-                  <!-- FLOOR ACTIVE VIEW (Floor 1 or Unlocked Floor 2) -->
+                  <!-- FLOOR ACTIVE VIEW (Floors 1..7 Luxury Progressive Sanctuary Hall) -->
                   <div id="floor-active-view" class="space-y-3">
+                    <!-- Dynamic Floor Luxury Showcase Header Banner -->
+                    <div id="floor-luxury-banner" class="hidden"></div>
+
                     <!-- 7-Day Deity Selector Strip -->
                     <div class="space-y-1.5">
                       <div class="flex items-center justify-between gap-2">
-                        <span class="text-xs font-semibold text-[var(--muted-foreground)]">🐉 เทพประจำวัน (ไหว้วันละ 1 ครั้ง)</span>
+                        <span id="floor-strip-title" class="text-xs font-semibold text-[var(--muted-foreground)]">🐉 เทพประจำวัน (ไหว้วันละ 1 ครั้ง)</span>
                         <div class="flex items-center gap-2">
                           <span id="daily-quota-pill" class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-500 border border-emerald-500/30">
                             สิทธิ์วันนี้ 1/1
@@ -314,67 +327,58 @@
                       </div>
                     </div>
 
-                    <!-- Chinese Shrine Altar Card (Unified Imperial Crimson & Gold) -->
+                    <!-- Chinese Shrine Altar Card (Progressive Tier 1→7 Imperial Crimson & Gold Luxury) -->
                     <div id="altar-card" class="rounded-2xl bg-gradient-to-b from-red-950/50 via-[var(--card)] to-red-950/25 border-2 border-red-700/70 p-3.5 relative overflow-hidden">
+                      <!-- Progressive Corner Filigree & Side Palace Pillars (Rendered dynamically per floor 2..7) -->
+                      <div id="altar-corners" class="pointer-events-none hidden"></div>
+                      <div id="altar-pillar-left" class="pointer-events-none hidden"></div>
+                      <div id="altar-pillar-right" class="pointer-events-none hidden"></div>
+
+                      <!-- Optional Upper Canopy Roof / Imperial Eaves (Floors 2..7) -->
+                      <div id="altar-canopy-top" class="hidden mb-2 relative z-10"></div>
+
                       <!-- Chinese Shrine Top Beam Plaque -->
-                      <div class="flex items-center justify-between px-2.5 py-1 mb-3 rounded-lg bg-red-950 border border-amber-500/60 text-amber-200 text-[11px] font-bold">
+                      <div id="altar-plaque-bar" class="relative z-10 flex items-center justify-between px-2.5 py-1 mb-3 rounded-lg bg-red-950 border border-amber-500/60 text-amber-200 text-[11px] font-bold">
                         <span id="dragon-plaque-left" class="w-4 h-4 rounded-full dragon-aura-mini inline-flex items-center justify-center overflow-hidden border border-amber-400/75 shrink-0"></span>
                         <span id="altar-plaque-title" class="truncate px-1">ตำหนักมังกรฟ้า · วิหารเจ้าที่ &amp; เจ้าแม่ทับทิม</span>
                         <span id="dragon-plaque-right" class="w-4 h-4 rounded-full dragon-aura-mini inline-flex items-center justify-center overflow-hidden border border-amber-400/75 shrink-0"></span>
                       </div>
 
-                      <div class="flex flex-col items-center text-center space-y-2.5">
-                        <!-- Day + Today Badge -->
-                        <div class="flex items-center gap-2">
+                      <div class="relative z-10 flex flex-col items-center text-center space-y-2.5">
+                        <!-- Day + Today Badge + Visual Status -->
+                        <div class="flex flex-wrap items-center justify-center gap-1.5">
                           <span id="deity-day-badge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold border">
                             วันพฤหัสบดี
                           </span>
                           <span id="today-indicator" class="hidden px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-500 border border-emerald-500/30">
                             องค์ประจำวันนี้
                           </span>
+                          <span id="deity-tier-perk-badge" class="hidden px-2 py-0.5 rounded-full text-[10px] font-bold"></span>
                         </div>
 
-                        <!-- Chinese Shrine Portrait Altar Frame + Flanking Static Lanterns -->
-                        <div class="flex items-center justify-center gap-2.5 my-1">
-                          <!-- Left Lantern SVG -->
-                          <svg viewBox="0 0 24 44" class="w-5 h-10 shrink-0 opacity-90">
-                            <line x1="12" y1="0" x2="12" y2="8" stroke="#f59e0b" stroke-width="1.5"/>
-                            <rect x="7" y="7" width="10" height="3" rx="1" fill="#fbbf24"/>
-                            <ellipse cx="12" cy="20" rx="9" ry="11" fill="#b91c1c" stroke="#f59e0b" stroke-width="1.4"/>
-                            <rect x="8" y="30" width="8" height="3" rx="1" fill="#fbbf24"/>
-                            <line x1="12" y1="33" x2="12" y2="42" stroke="#ef4444" stroke-width="2"/>
-                          </svg>
+                        <!-- Chinese Shrine Portrait Altar Frame + Backdrop Aureole + Flanking Lanterns -->
+                        <div class="relative flex items-center justify-center gap-2.5 my-1">
+                          <div id="altar-portrait-aureole" class="pointer-events-none hidden"></div>
 
-                          <!-- Portrait Frame (Unified Imperial Crimson & Gold) -->
-                          <div id="deity-portrait-frame" class="w-40 h-40 rounded-2xl p-1 bg-gradient-to-b from-red-900 via-red-950 to-stone-950 border-2 border-amber-500/90 shadow-lg overflow-hidden relative flex items-center justify-center">
-                            <!-- Portrait Image Populated by JS -->
+                          <!-- Left Lantern Container -->
+                          <div id="altar-lantern-left" class="relative z-10 shrink-0"></div>
+
+                          <!-- Portrait Frame (Scales 1F w-40 -> 2F-4F w-44 -> 5F-7F w-48) -->
+                          <div id="deity-portrait-frame" class="relative z-10 w-40 h-40 rounded-2xl p-1 bg-gradient-to-b from-red-900 via-red-950 to-stone-950 border-2 border-amber-500/90 shadow-lg overflow-hidden flex items-center justify-center">
+                            <!-- Portrait Image or Male/Female Graphic Dummy Populated by JS -->
                           </div>
 
-                          <!-- Right Lantern SVG -->
-                          <svg viewBox="0 0 24 44" class="w-5 h-10 shrink-0 opacity-90">
-                            <line x1="12" y1="0" x2="12" y2="8" stroke="#f59e0b" stroke-width="1.5"/>
-                            <rect x="7" y="7" width="10" height="3" rx="1" fill="#fbbf24"/>
-                            <ellipse cx="12" cy="20" rx="9" ry="11" fill="#b91c1c" stroke="#f59e0b" stroke-width="1.4"/>
-                            <rect x="8" y="30" width="8" height="3" rx="1" fill="#fbbf24"/>
-                            <line x1="12" y1="33" x2="12" y2="42" stroke="#ef4444" stroke-width="2"/>
-                          </svg>
+                          <!-- Right Lantern Container -->
+                          <div id="altar-lantern-right" class="relative z-10 shrink-0"></div>
                         </div>
 
-                        <!-- Static Bronze Incense Burner Pedestal -->
-                        <div class="w-full flex flex-col items-center pt-0.5">
-                          <svg viewBox="0 0 120 28" class="w-28 h-7">
-                            <line x1="52" y1="2" x2="54" y2="12" stroke="#d97706" stroke-width="1.6"/>
-                            <circle cx="52" cy="2" r="1.4" fill="#ef4444"/>
-                            <line x1="60" y1="1" x2="60" y2="12" stroke="#d97706" stroke-width="1.6"/>
-                            <circle cx="60" cy="1" r="1.4" fill="#ef4444"/>
-                            <line x1="68" y1="2" x2="66" y2="12" stroke="#d97706" stroke-width="1.6"/>
-                            <circle cx="68" cy="2" r="1.4" fill="#ef4444"/>
-                            <path d="M44 12 Q60 10 76 12 L73 22 Q60 25 47 22 Z" fill="#b45309" stroke="#fbbf24" stroke-width="1.2"/>
-                            <rect x="20" y="23" width="80" height="4" rx="1.5" fill="#7f1d1d" stroke="#f59e0b" stroke-width="0.8"/>
-                          </svg>
-                        </div>
+                        <!-- Sacred Golden Lotus Pedestal (Rendered on Floors 5..7) -->
+                        <div id="altar-lotus-pedestal" class="hidden -mt-2 relative z-10"></div>
 
-                        <div class="space-y-0.5">
+                        <!-- Dynamic Bronze / Gilded Gold Incense Burner Pedestal -->
+                        <div id="altar-incense-pedestal" class="w-full flex flex-col items-center pt-0.5 relative z-10"></div>
+
+                        <div class="space-y-0.5 px-2">
                           <h3 id="deity-name" class="text-base font-bold">ชื่อเทพ</h3>
                           <p id="deity-title" class="text-xs font-medium text-amber-500">ฉายา / ด้านที่โดดเด่น</p>
                         </div>
@@ -383,12 +387,12 @@
                           <!-- Personalized Bazi/Astro reason -->
                         </div>
 
-                        <p id="deity-desc" class="text-xs text-[var(--muted-foreground)] leading-relaxed max-w-xs">
+                        <p id="deity-desc" class="text-xs text-[var(--muted-foreground)] leading-relaxed max-w-xs px-2">
                           คำอธิบายพรและความหมาย
                         </p>
 
                         <!-- Wish Topic Chips -->
-                        <div class="w-full pt-1 space-y-2">
+                        <div class="w-full pt-1 space-y-2 px-1">
                           <div class="flex flex-wrap justify-center gap-1.5" id="wish-topics">
                             <!-- Populated by JS -->
                           </div>
@@ -397,13 +401,16 @@
                       </div>
                     </div>
 
+                    <!-- INLINE FLOOR UNLOCK GATE (Shown below Altar Card when viewing locked Floors 2..7) -->
+                    <div id="floor-unlock-gate" class="hidden space-y-3"></div>
+
                     <!-- PRE-WORSHIP SLOT: OFFERINGS TABLE (โต๊ะเครื่องสักการะ) -->
                     <div id="offerings-slot" class="rounded-2xl bg-[var(--card)] border border-red-800/40 p-3.5 space-y-2.5">
                       <!-- Populated dynamically based on MVP Phase (1 vs 2+) -->
                     </div>
 
                     <!-- PRIMARY CTA: WORSHIP BUTTON (Requirement #3 — Max 1/day) -->
-                    <div class="space-y-2">
+                    <div id="worship-cta-box" class="space-y-2">
                       <button onclick="handleWorshipCtaClick()" id="btn-worship" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-red-700 via-red-600 to-amber-600 hover:from-red-600 hover:to-amber-500 text-amber-50 border border-amber-400/60 font-bold text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer">
                         <span id="btn-worship-icon">🙏</span>
                         <span id="btn-worship-label">กดเพื่อสักการะเทพประจำวัน</span>
@@ -837,7 +844,278 @@
       }
     ];
 
-    function renderDeityVisual(deity, dayMeta, sizeClasses = "w-full h-full") {
+    const FLOOR_LUXURY_CONFIG = {
+      1: {
+        tierLabel: "ชั้นที่ 1 · ปฐมภูมิเจ้าที่",
+        archTitle: "วิหารไม้ชาดลงรักทอง",
+        chineseBadge: "福德正殿",
+        materialNote: "ฐานรากแห่งความร่มเย็น · ภาพเทพจริง 7/7 องค์",
+        bannerCls: "rounded-xl bg-gradient-to-r from-red-950/90 via-red-900/70 to-red-950/90 border border-red-700/65 px-3 py-2",
+        cardCls: "rounded-2xl border-2 border-red-700/70 p-3.5 relative overflow-hidden",
+        cardBg: "linear-gradient(180deg, rgba(69, 10, 10, 0.55) 0%, #22080d 55%, rgba(69, 10, 10, 0.3) 100%)",
+        cardShadow: "0 10px 24px rgba(0,0,0,0.45)",
+        plaqueCls: "relative z-10 flex items-center justify-between px-2.5 py-1 mb-3 rounded-lg bg-red-950 border border-amber-500/60 text-amber-200 text-[11px] font-bold",
+        frameSizeCls: "w-40 h-40 rounded-2xl p-1",
+        frameStyle: "background: linear-gradient(180deg,#7f1d1d,#2b090e); border: 2px solid #f59e0b; box-shadow: 0 8px 20px rgba(0,0,0,0.45);",
+        cornerMode: "none",
+        pillarMode: "none",
+        canopyMode: "none",
+        aureoleMode: "none",
+        lotusBase: false,
+        lanternTier: 1,
+        censerTier: 1,
+        padXCls: ""
+      },
+      2: {
+        tierLabel: "ชั้นที่ 2 · หอไหมทองคำ & มงคลทรัพย์",
+        archTitle: "วิหารไหมทองมงคลคู่",
+        chineseBadge: "財神金錦殿",
+        materialNote: "ประดับมุมลายกนกทองคู่ · กรอบใหญ่ 44",
+        bannerCls: "rounded-xl bg-gradient-to-r from-red-950 via-red-900/90 to-amber-950/60 border border-amber-500/55 px-3 py-2 shadow-sm",
+        cardCls: "rounded-2xl border-2 border-amber-500/75 p-3.5 relative overflow-hidden",
+        cardBg: "linear-gradient(155deg, rgba(127, 29, 29, 0.72) 0%, #24070d 55%, rgba(120, 53, 15, 0.36) 100%)",
+        cardShadow: "0 12px 30px rgba(245, 158, 11, 0.16)",
+        plaqueCls: "relative z-10 flex items-center justify-between px-2.5 py-1.5 mb-3 rounded-lg bg-gradient-to-r from-red-950 via-red-900 to-red-950 border border-amber-400/80 text-amber-100 text-[11px] font-bold shadow",
+        frameSizeCls: "w-44 h-44 rounded-2xl p-1.5",
+        frameStyle: "background: linear-gradient(145deg,#b45309,#450a0a,#92400e); border: 2px solid #fbbf24; box-shadow: 0 0 24px rgba(245,158,11,0.34);",
+        cornerMode: "gold",
+        pillarMode: "trim",
+        canopyMode: "coin",
+        aureoleMode: "warm",
+        lotusBase: false,
+        lanternTier: 2,
+        censerTier: 1,
+        padXCls: "px-2"
+      },
+      3: {
+        tierLabel: "ชั้นที่ 3 · ท้องพระโรงเสามังกรคู่",
+        archTitle: "พระแท่นเสามังกรราชสำนัก",
+        chineseBadge: "帝君龍柱殿",
+        materialNote: "เสามังกรทองคู่ขนาบพระแท่น · กระถางธูปสามขาทอง",
+        bannerCls: "rounded-xl bg-gradient-to-r from-red-950 via-red-800/85 to-amber-900/65 border-2 border-amber-400/65 px-3 py-2 shadow",
+        cardCls: "rounded-2xl border-2 border-amber-400/85 p-3.5 relative overflow-hidden",
+        cardBg: "radial-gradient(circle at 50% 18%, rgba(217, 119, 6, 0.24), transparent 56%), linear-gradient(180deg, rgba(105, 16, 22, 0.85) 0%, #20060b 65%, rgba(90, 24, 12, 0.55) 100%)",
+        cardShadow: "0 14px 36px rgba(245, 158, 11, 0.22)",
+        plaqueCls: "relative z-10 flex items-center justify-between px-3 py-1.5 mb-3 rounded-xl bg-gradient-to-r from-red-950 via-amber-900/50 to-red-950 border-2 border-amber-400/85 text-amber-100 text-[11px] font-bold shadow-md",
+        frameSizeCls: "w-44 h-44 rounded-2xl p-1.5",
+        frameStyle: "background: linear-gradient(135deg,#fbbf24,#7f1d1d,#d97706); border: 2px solid #fde68a; box-shadow: 0 0 28px rgba(251,191,36,0.42), inset 0 0 10px rgba(254,240,138,0.3);",
+        cornerMode: "gold",
+        pillarMode: "dragon",
+        canopyMode: "palace",
+        aureoleMode: "ring",
+        lotusBase: false,
+        lanternTier: 2,
+        censerTier: 2,
+        padXCls: "px-3.5"
+      },
+      4: {
+        tierLabel: "ชั้นที่ 4 · วิหารหยก & เมฆามงคล",
+        archTitle: "หอแปดเซียนอัญมณีหยกทอง",
+        chineseBadge: "瑤池雲玉閣",
+        materialNote: "ประดับหยกมรกตล้อมกรอบทอง & ลายเมฆสวรรค์",
+        bannerCls: "rounded-xl bg-gradient-to-r from-red-950 via-rose-950/90 to-emerald-950/55 border-2 border-amber-400/75 px-3 py-2 shadow",
+        cardCls: "rounded-2xl border-2 border-amber-400 p-3.5 relative overflow-hidden",
+        cardBg: "radial-gradient(circle at 50% 24%, rgba(16, 185, 129, 0.14), transparent 52%), radial-gradient(circle at 50% 10%, rgba(251, 191, 36, 0.24), transparent 60%), linear-gradient(180deg, rgba(110, 14, 24, 0.9) 0%, #1d060b 65%, rgba(120, 53, 15, 0.45) 100%)",
+        cardShadow: "0 16px 40px rgba(245, 158, 11, 0.26), 0 0 20px rgba(16, 185, 129, 0.15)",
+        plaqueCls: "relative z-10 flex items-center justify-between px-3 py-1.5 mb-3 rounded-xl bg-gradient-to-r from-red-950 via-red-900 to-amber-950 border-2 border-amber-300 text-amber-100 text-[11px] font-bold shadow-md",
+        frameSizeCls: "w-44 h-44 rounded-[1.35rem] p-1.5",
+        frameStyle: "background: linear-gradient(145deg,#fde68a,#7f1d1d,#047857,#f59e0b); border: 2px solid #fde68a; box-shadow: 0 0 32px rgba(251,191,36,0.45), 0 0 18px rgba(16,185,129,0.22);",
+        cornerMode: "jade",
+        pillarMode: "jade",
+        canopyMode: "cloud",
+        aureoleMode: "ring",
+        lotusBase: false,
+        lanternTier: 2,
+        censerTier: 2,
+        padXCls: "px-4"
+      },
+      5: {
+        tierLabel: "ชั้นที่ 5 · ปราสาทดอกบัวทองคำ",
+        archTitle: "มหาวิหารรัศมีบัวสวรรค์",
+        chineseBadge: "金蓮寶剎殿",
+        materialNote: "แท่นดอกบัวทองคำรองรับภาพเทพ + รัศมีฉัพพรรณ 3 ชั้น",
+        bannerCls: "rounded-xl bg-gradient-to-r from-red-950 via-red-900 to-amber-800/75 border-2 border-amber-300/85 px-3 py-2 shadow-md",
+        cardCls: "rounded-[1.35rem] border-2 border-amber-300 p-3.5 relative overflow-hidden",
+        cardBg: "radial-gradient(circle at 50% 34%, rgba(251, 191, 36, 0.28), transparent 58%), linear-gradient(180deg, rgba(135, 18, 28, 0.92) 0%, #24060b 58%, rgba(146, 64, 14, 0.45) 100%)",
+        cardShadow: "0 18px 46px rgba(251, 191, 36, 0.30)",
+        plaqueCls: "relative z-10 flex items-center justify-between px-3 py-1.5 mb-3 rounded-xl bg-gradient-to-r from-amber-950/90 via-red-900 to-amber-950/90 border-2 border-amber-300 text-amber-50 text-[11px] font-bold shadow-lg",
+        frameSizeCls: "w-48 h-48 rounded-[1.45rem] p-2",
+        frameStyle: "background: linear-gradient(145deg,#fef08a,#b45309,#7f1d1d,#fbbf24); border: 2px solid #fef08a; box-shadow: 0 0 36px rgba(251,191,36,0.52), inset 0 0 12px rgba(254,249,195,0.4);",
+        cornerMode: "jade",
+        pillarMode: "lotus",
+        canopyMode: "lotus",
+        aureoleMode: "mandala",
+        lotusBase: true,
+        lanternTier: 3,
+        censerTier: 3,
+        padXCls: "px-4"
+      },
+      6: {
+        tierLabel: "ชั้นที่ 6 · พระมหาวิหารบุษบกคู่ทองคำ",
+        archTitle: "มหาวิหารจตุรจักรพรรดิ",
+        chineseBadge: "重簷玉闕殿",
+        materialNote: "ซุ้มหลังคาบุษบก 2 ชั้น · รัศมีลำแสงทองคำแท้",
+        bannerCls: "rounded-xl bg-gradient-to-r from-amber-950/90 via-red-900 to-amber-900/90 border-2 border-amber-300 px-3 py-2 shadow-lg",
+        cardCls: "rounded-[1.45rem] border-2 border-amber-300 p-3.5 relative overflow-hidden",
+        cardBg: "radial-gradient(circle at 50% 35%, rgba(253, 224, 71, 0.32), transparent 60%), linear-gradient(180deg, rgba(145, 22, 22, 0.94) 0%, #26070c 58%, rgba(161, 98, 7, 0.5) 100%)",
+        cardShadow: "0 20px 52px rgba(251, 191, 36, 0.38)",
+        plaqueCls: "relative z-10 flex items-center justify-between px-3 py-1.5 mb-3 rounded-xl bg-gradient-to-r from-amber-900/75 via-red-900 to-amber-900/75 border-2 border-amber-200 text-amber-50 text-[11px] font-bold shadow-lg",
+        frameSizeCls: "w-48 h-48 rounded-[1.55rem] p-2",
+        frameStyle: "background: linear-gradient(145deg,#fef9c3,#d97706,#991b1b,#fde047); border: 3px solid #fef08a; box-shadow: 0 0 42px rgba(253,224,71,0.58), 0 0 18px rgba(251,191,36,0.45);",
+        cornerMode: "imperial",
+        pillarMode: "palace",
+        canopyMode: "eaves",
+        aureoleMode: "sunburst6",
+        lotusBase: true,
+        lanternTier: 3,
+        censerTier: 3,
+        padXCls: "px-5"
+      },
+      7: {
+        tierLabel: "ชั้นที่ 7 สูงสุด · มหาปราสาททองคำเก้าชั้นฟ้า",
+        archTitle: "พระที่นั่งเง็กเซียนฮ่องเต้ & ซานชิง",
+        chineseBadge: "九天玉皇至尊",
+        materialNote: "ยอดเจดีย์ 24K Gold Royal Portal · อัญมณีมรกตคู่สวรรค์",
+        bannerCls: "rounded-xl bg-gradient-to-r from-amber-900/80 via-red-800 to-amber-900/80 border-2 border-amber-200 px-3 py-2 shadow-[0_0_24px_rgba(251,191,36,0.35)]",
+        cardCls: "rounded-[1.6rem] border-[3px] border-amber-300 p-3.5 relative overflow-hidden",
+        cardBg: "radial-gradient(circle at 50% 34%, rgba(254, 240, 138, 0.38), rgba(217, 119, 6, 0.14) 48%, transparent 72%), linear-gradient(180deg, rgba(153, 27, 27, 0.96) 0%, #2a070d 55%, rgba(146, 64, 14, 0.58) 100%)",
+        cardShadow: "0 0 50px rgba(251, 191, 36, 0.44), inset 0 0 36px rgba(251, 191, 36, 0.16)",
+        plaqueCls: "relative z-10 flex items-center justify-between px-3.5 py-2 mb-3 rounded-xl bg-gradient-to-r from-amber-700/80 via-red-900 to-amber-700/80 border-2 border-amber-200 text-amber-50 text-xs font-extrabold shadow-[0_0_18px_rgba(253,224,71,0.45)]",
+        frameSizeCls: "w-48 h-48 rounded-[1.7rem] p-2",
+        frameStyle: "background: linear-gradient(135deg,#fef9c3,#f59e0b,#7f1d1d,#fef08a,#d97706); border: 3px solid #fef9c3; box-shadow: 0 0 48px rgba(254,240,138,0.72), 0 0 22px rgba(245,158,11,0.65), inset 0 0 14px rgba(255,251,235,0.5);",
+        cornerMode: "imperial",
+        pillarMode: "imperial",
+        canopyMode: "nineheavens",
+        aureoleMode: "sunburst7",
+        lotusBase: true,
+        lanternTier: 3,
+        censerTier: 3,
+        padXCls: "px-5"
+      }
+    };
+
+    let __dummySvgSeq = 0;
+
+    function buildGenderDummySvg(deity, dayMeta, compact = false) {
+      const gender = (deity && deity.gender === "female") ? "female" : "male";
+      const id = ++__dummySvgSeq;
+      const haloColorA = gender === "female" ? "#fef08a" : "#fde047";
+      const haloColorB = gender === "female" ? "#fb7185" : "#d97706";
+      const robeStart = gender === "female" ? "#be123c" : "#991b1b";
+      const robeEnd = gender === "female" ? "#4c0519" : "#450a0a";
+      const badgeText = gender === "female" ? "♀ เทพสตรี · รอภาพวาดจริง" : "♂ เทพบุรุษ · รอภาพวาดจริง";
+      const badgeCls = gender === "female"
+        ? "bg-rose-950/90 text-amber-200 border-pink-300/60"
+        : "bg-red-950/90 text-amber-200 border-amber-400/65";
+
+      const figureSvg = gender === "female" ? `
+        <svg viewBox="0 0 160 160" data-deity-dummy="female" class="w-full h-full block">
+          <defs>
+            <radialGradient id="dBg_${id}" cx="50%" cy="42%" r="60%">
+              <stop offset="0%" stop-color="#881337"/>
+              <stop offset="55%" stop-color="#450a0a"/>
+              <stop offset="100%" stop-color="#1f0408"/>
+            </radialGradient>
+            <radialGradient id="dHalo_${id}" cx="50%" cy="42%" r="50%">
+              <stop offset="0%" stop-color="${haloColorA}" stop-opacity="0.95"/>
+              <stop offset="52%" stop-color="${haloColorB}" stop-opacity="0.38"/>
+              <stop offset="100%" stop-color="${haloColorB}" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="dGold_${id}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fef9c3"/>
+              <stop offset="50%" stop-color="#fbbf24"/>
+              <stop offset="100%" stop-color="#b45309"/>
+            </linearGradient>
+            <linearGradient id="dRobe_${id}" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="${robeStart}"/>
+              <stop offset="100%" stop-color="${robeEnd}"/>
+            </linearGradient>
+          </defs>
+          <rect width="160" height="160" fill="url(#dBg_${id})"/>
+          <!-- Moon & Cloud Filigree Backdrops -->
+          <circle cx="80" cy="64" r="54" fill="url(#dHalo_${id})"/>
+          <circle cx="80" cy="64" r="42" fill="none" stroke="url(#dGold_${id})" stroke-width="1.4" stroke-dasharray="4 3" opacity="0.75"/>
+          <path d="M18 112 Q36 100 50 108 M110 108 Q124 100 142 112" fill="none" stroke="#fbbf24" stroke-width="1.2" opacity="0.45"/>
+          <!-- Phoenix Crown Headdress (鳳冠) -->
+          <path d="M53 46 Q42 28 32 34 Q44 48 56 52 Z" fill="url(#dGold_${id})" opacity="0.95"/>
+          <path d="M107 46 Q118 28 128 34 Q116 48 104 52 Z" fill="url(#dGold_${id})" opacity="0.95"/>
+          <path d="M58 46 Q80 20 102 46 L98 54 Q80 48 62 54 Z" fill="url(#dGold_${id})" stroke="#7f1d1d" stroke-width="1"/>
+          <circle cx="80" cy="34" r="4.5" fill="#fef08a" stroke="#b45309" stroke-width="1.2"/>
+          <circle cx="67" cy="40" r="2.8" fill="#fda4af"/>
+          <circle cx="93" cy="40" r="2.8" fill="#fda4af"/>
+          <!-- Flowing Celestial Ribbon Scarf -->
+          <path d="M40 94 Q24 114 30 142 M120 94 Q136 114 130 142" fill="none" stroke="url(#dGold_${id})" stroke-width="3.2" stroke-linecap="round" opacity="0.78"/>
+          <!-- Graceful Female Hair & Oval Face Silhouette -->
+          <path d="M57 54 Q52 68 58 84 L102 84 Q108 68 103 54 Z" fill="#1c0d10"/>
+          <ellipse cx="80" cy="68" rx="18" ry="22" fill="url(#dGold_${id})" opacity="0.92"/>
+          <ellipse cx="80" cy="69" rx="15.5" ry="19.5" fill="#fffbeb" opacity="0.24"/>
+          <circle cx="80" cy="56" r="1.8" fill="#e11d48"/>
+          <!-- Delicate Neck & Sloping Silk Robe Bust -->
+          <rect x="74" y="86" width="12" height="14" rx="5" fill="url(#dGold_${id})" opacity="0.88"/>
+          <path d="M26 160 C32 114 50 98 68 96 L80 108 L92 96 C110 98 128 114 134 160 Z" fill="url(#dRobe_${id})" stroke="url(#dGold_${id})" stroke-width="2.2"/>
+          <!-- Ornate Cloud Collar (雲肩) & Lotus Chest Jewel -->
+          <path d="M54 102 Q66 118 80 112 Q94 118 106 102 Q93 96 80 103 Q67 96 54 102 Z" fill="url(#dGold_${id})" opacity="0.95"/>
+          <circle cx="80" cy="124" r="5" fill="#fb7185" stroke="#fef08a" stroke-width="1.5"/>
+        </svg>
+      ` : `
+        <svg viewBox="0 0 160 160" data-deity-dummy="male" class="w-full h-full block">
+          <defs>
+            <radialGradient id="dBg_${id}" cx="50%" cy="42%" r="62%">
+              <stop offset="0%" stop-color="#991b1b"/>
+              <stop offset="56%" stop-color="#450a0a"/>
+              <stop offset="100%" stop-color="#1a0406"/>
+            </radialGradient>
+            <radialGradient id="dHalo_${id}" cx="50%" cy="40%" r="52%">
+              <stop offset="0%" stop-color="${haloColorA}" stop-opacity="0.95"/>
+              <stop offset="52%" stop-color="${haloColorB}" stop-opacity="0.38"/>
+              <stop offset="100%" stop-color="${haloColorB}" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="dGold_${id}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fef9c3"/>
+              <stop offset="50%" stop-color="#f59e0b"/>
+              <stop offset="100%" stop-color="#92400e"/>
+            </linearGradient>
+            <linearGradient id="dRobe_${id}" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="${robeStart}"/>
+              <stop offset="100%" stop-color="${robeEnd}"/>
+            </linearGradient>
+          </defs>
+          <rect width="160" height="160" fill="url(#dBg_${id})"/>
+          <!-- Sun Imperial Aureole -->
+          <circle cx="80" cy="60" r="55" fill="url(#dHalo_${id})"/>
+          <circle cx="80" cy="60" r="43" fill="none" stroke="url(#dGold_${id})" stroke-width="1.6" opacity="0.8"/>
+          <!-- Imperial Winged Crown / Official Hat (朝冠冕) -->
+          <rect x="40" y="39" width="80" height="7" rx="3.5" fill="url(#dGold_${id})" stroke="#7f1d1d" stroke-width="1"/>
+          <path d="M58 43 L62 24 L80 18 L98 24 L102 43 Z" fill="#b91c1c" stroke="url(#dGold_${id})" stroke-width="2"/>
+          <rect x="75" y="25" width="10" height="14" rx="2" fill="#10b981" stroke="#fef08a" stroke-width="1.2"/>
+          <path d="M36 46 Q46 53 56 46 M124 46 Q114 53 104 46" fill="none" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round"/>
+          <!-- Noble Male Head & Dignified Beard Silhouette -->
+          <path d="M60 48 L100 48 L102 74 Q100 90 80 94 Q60 90 58 74 Z" fill="url(#dGold_${id})" opacity="0.94"/>
+          <path d="M63 50 L97 50 L98 71 Q96 82 80 84 Q64 82 62 71 Z" fill="#fffbeb" opacity="0.22"/>
+          <!-- Regal Sage Beard & Mustache Trim -->
+          <path d="M66 78 Q80 73 94 78 Q91 98 80 105 Q69 98 66 78 Z" fill="#451a03" stroke="url(#dGold_${id})" stroke-width="1"/>
+          <!-- Broad Imperial Armored Dragon Shoulders & Court Lapels -->
+          <path d="M18 160 C20 112 38 92 64 90 L80 112 L96 90 C122 92 140 112 142 160 Z" fill="url(#dRobe_${id})" stroke="url(#dGold_${id})" stroke-width="2.4"/>
+          <path d="M60 92 L80 124 L100 92" fill="none" stroke="url(#dGold_${id})" stroke-width="4" stroke-linejoin="round"/>
+          <circle cx="80" cy="134" r="7" fill="url(#dGold_${id})" stroke="#7f1d1d" stroke-width="1.2"/>
+        </svg>
+      `;
+
+      return `
+        <div class="relative w-full h-full overflow-hidden">
+          ${figureSvg}
+          ${!compact ? `
+            <div class="pointer-events-none absolute inset-x-1.5 bottom-1.5 flex justify-center">
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-bold border backdrop-blur-sm shadow ${badgeCls}">
+                ${badgeText}
+              </span>
+            </div>
+          ` : ""}
+        </div>
+      `;
+    }
+
+    function renderDeityVisual(deity, dayMeta, sizeClasses = "w-full h-full", opts = {}) {
       const src = deity && deity.imgKey ? DEITY_PORTRAITS[deity.imgKey] : null;
       if (src) {
         return `
@@ -848,12 +1126,359 @@
           </div>
         `;
       }
-      const shortDay = dayMeta ? dayMeta.short : "เทพ";
       return `
-        <div class="${sizeClasses} bg-gradient-to-b from-red-900 to-red-950 border border-amber-500/50 flex items-center justify-center text-[10px] font-bold text-amber-200 text-center px-1">
-          ${shortDay}
+        <div class="relative ${sizeClasses} overflow-hidden bg-red-950">
+          ${buildGenderDummySvg(deity, dayMeta, Boolean(opts.compact))}
         </div>
       `;
+    }
+
+    function buildFloorCanopyHtml(floorNum) {
+      const cfg = FLOOR_LUXURY_CONFIG[floorNum] || FLOOR_LUXURY_CONFIG[1];
+      if (cfg.canopyMode === "none") return "";
+      if (cfg.canopyMode === "coin") {
+        return `
+          <div class="flex items-center justify-center gap-2 py-1 px-3 rounded-full bg-gradient-to-r from-red-950/80 via-amber-900/45 to-red-950/80 border border-amber-500/50 text-[10px] font-bold text-amber-300">
+            <span>🪙</span><span>วิหารไหมทองคู่ · 護法財神華飾</span><span>🪙</span>
+          </div>
+        `;
+      }
+      if (cfg.canopyMode === "palace") {
+        return `
+          <div class="flex items-center justify-center gap-2 py-1 px-3 rounded-lg bg-gradient-to-r from-red-950 via-amber-800/45 to-red-950 border border-amber-400/70 text-[10px] font-bold text-amber-200 shadow">
+            <span>🐉</span><span>ซุ้มคานทองราชสำนัก · 帝君金闕</span><span>🐉</span>
+          </div>
+        `;
+      }
+      if (cfg.canopyMode === "cloud") {
+        return `
+          <div class="flex items-center justify-center gap-2 py-1 px-3 rounded-full bg-gradient-to-r from-red-950 via-emerald-950/60 to-red-950 border border-amber-400/75 text-[10px] font-bold text-amber-200 shadow">
+            <span>☁️</span><span>ซุ้มเมฆามงคลประดับหยก · 祥雲碧玉</span><span>☁️</span>
+          </div>
+        `;
+      }
+      if (cfg.canopyMode === "lotus") {
+        return `
+          <div class="flex flex-col items-center">
+            <svg viewBox="0 0 260 22" class="w-full max-w-[260px] h-5">
+              <path d="M10 18 Q65 4 130 14 Q195 4 250 18" fill="none" stroke="#fbbf24" stroke-width="1.6"/>
+              <path d="M110 16 Q130 2 150 16 Q130 22 110 16 Z" fill="#b45309" stroke="#fef08a" stroke-width="1.2"/>
+              <circle cx="130" cy="11" r="3" fill="#fef08a"/>
+            </svg>
+          </div>
+        `;
+      }
+      // Tier 6 (eaves) & Tier 7 (nineheavens imperial golden canopy)
+      const isNineHeavens = cfg.canopyMode === "nineheavens";
+      return `
+        <div class="flex flex-col items-center -mt-1">
+          <svg viewBox="0 0 280 34" class="w-full max-w-[276px] h-8">
+            <defs>
+              <linearGradient id="canopyG_${floorNum}" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#b45309"/>
+                <stop offset="50%" stop-color="#fef08a"/>
+                <stop offset="100%" stop-color="#b45309"/>
+              </linearGradient>
+            </defs>
+            <path d="M14 26 Q72 22 140 8 Q208 22 266 26 L252 31 Q140 24 28 31 Z" fill="url(#canopyG_${floorNum})" stroke="#7f1d1d" stroke-width="1.2"/>
+            ${isNineHeavens ? `
+              <path d="M44 17 Q94 14 140 3 Q186 14 236 17 L224 22 Q140 16 56 22 Z" fill="#fbbf24" stroke="#fef9c3" stroke-width="1"/>
+              <circle cx="140" cy="6" r="4.5" fill="#10b981" stroke="#fef9c3" stroke-width="1.4"/>
+            ` : `
+              <circle cx="140" cy="11" r="4" fill="#ef4444" stroke="#fef08a" stroke-width="1.4"/>
+            `}
+          </svg>
+        </div>
+      `;
+    }
+
+    function buildFloorCornersHtml(mode) {
+      if (mode === "none") return "";
+      const jewel = mode === "jade" ? "#10b981" : (mode === "imperial" ? "#fef08a" : "");
+      const borderCls = mode === "imperial" ? "border-amber-200" : "border-amber-400";
+      return `
+        <span class="absolute top-1.5 left-1.5 w-3.5 h-3.5 border-t-2 border-l-2 ${borderCls} rounded-tl-md"></span>
+        <span class="absolute top-1.5 right-1.5 w-3.5 h-3.5 border-t-2 border-r-2 ${borderCls} rounded-tr-md"></span>
+        <span class="absolute bottom-1.5 left-1.5 w-3.5 h-3.5 border-b-2 border-l-2 ${borderCls} rounded-bl-md"></span>
+        <span class="absolute bottom-1.5 right-1.5 w-3.5 h-3.5 border-b-2 border-r-2 ${borderCls} rounded-br-md"></span>
+        ${jewel ? `
+          <span class="absolute top-2 left-2 w-1.5 h-1.5 rounded-full" style="background:${jewel};box-shadow:0 0 6px ${jewel};"></span>
+          <span class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full" style="background:${jewel};box-shadow:0 0 6px ${jewel};"></span>
+        ` : ""}
+      `;
+    }
+
+    function buildFloorPillarHtml(mode, side) {
+      if (mode === "none" || mode === "trim") {
+        if (mode === "trim") {
+          return `<div class="absolute top-3 bottom-3 ${side === "left" ? "left-1" : "right-1"} w-[2px] bg-gradient-to-b from-amber-300/60 via-amber-500/25 to-amber-300/60"></div>`;
+        }
+        return "";
+      }
+      const hasJade = mode === "jade" || mode === "imperial";
+      const posCls = side === "left" ? "left-1" : "right-1";
+      const pillarGrad = mode === "imperial"
+        ? "from-amber-400 via-yellow-200 to-amber-600"
+        : "from-amber-600 via-amber-400 to-red-800";
+      return `
+        <div class="absolute top-8 bottom-8 ${posCls} w-2.5 rounded-full bg-gradient-to-b ${pillarGrad} border border-amber-300/80 opacity-85 flex flex-col items-center justify-between py-2">
+          <span class="w-1.5 h-1.5 rounded-full ${hasJade ? "bg-emerald-400" : "bg-red-700"}"></span>
+          <span class="w-full h-[1px] bg-red-950/60"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-100"></span>
+          <span class="w-full h-[1px] bg-red-950/60"></span>
+          <span class="w-1.5 h-1.5 rounded-full ${hasJade ? "bg-emerald-400" : "bg-red-700"}"></span>
+        </div>
+      `;
+    }
+
+    function buildFloorLanternHtml(tier) {
+      if (tier === 3) {
+        return `
+          <svg viewBox="0 0 28 52" class="w-6 h-12 opacity-95 drop-shadow-[0_0_8px_rgba(251,191,36,0.55)]">
+            <line x1="14" y1="0" x2="14" y2="8" stroke="#fde047" stroke-width="1.6"/>
+            <path d="M7 8 L21 8 L19 12 L9 12 Z" fill="#fef08a"/>
+            <ellipse cx="14" cy="23" rx="10.5" ry="12" fill="#dc2626" stroke="#fde047" stroke-width="1.5"/>
+            <ellipse cx="14" cy="23" rx="5" ry="11.5" fill="none" stroke="#fbbf24" stroke-width="0.9" opacity="0.7"/>
+            <rect x="9" y="34" width="10" height="3.5" rx="1" fill="#fde047"/>
+            <line x1="11" y1="38" x2="11" y2="48" stroke="#f59e0b" stroke-width="1.4"/>
+            <line x1="14" y1="38" x2="14" y2="50" stroke="#ef4444" stroke-width="1.8"/>
+            <line x1="17" y1="38" x2="17" y2="48" stroke="#f59e0b" stroke-width="1.4"/>
+          </svg>
+        `;
+      }
+      if (tier === 2) {
+        return `
+          <svg viewBox="0 0 26 48" class="w-5 h-11 opacity-95 drop-shadow-[0_0_6px_rgba(245,158,11,0.45)]">
+            <line x1="13" y1="0" x2="13" y2="8" stroke="#fbbf24" stroke-width="1.5"/>
+            <rect x="7.5" y="7" width="11" height="3" rx="1" fill="#fde047"/>
+            <ellipse cx="13" cy="21" rx="9.5" ry="11" fill="#b91c1c" stroke="#fbbf24" stroke-width="1.5"/>
+            <rect x="8.5" y="31" width="9" height="3" rx="1" fill="#fde047"/>
+            <line x1="13" y1="34" x2="13" y2="46" stroke="#ef4444" stroke-width="2"/>
+          </svg>
+        `;
+      }
+      return `
+        <svg viewBox="0 0 24 44" class="w-5 h-10 opacity-90">
+          <line x1="12" y1="0" x2="12" y2="8" stroke="#f59e0b" stroke-width="1.5"/>
+          <rect x="7" y="7" width="10" height="3" rx="1" fill="#fbbf24"/>
+          <ellipse cx="12" cy="20" rx="9" ry="11" fill="#b91c1c" stroke="#f59e0b" stroke-width="1.4"/>
+          <rect x="8" y="30" width="8" height="3" rx="1" fill="#fbbf24"/>
+          <line x1="12" y1="33" x2="12" y2="42" stroke="#ef4444" stroke-width="2"/>
+        </svg>
+      `;
+    }
+
+    function buildFloorLotusPedestalHtml(floorNum) {
+      if (floorNum < 5) return "";
+      const fillPetal = floorNum >= 7 ? "#fde047" : "#fbbf24";
+      return `
+        <svg viewBox="0 0 180 26" class="w-44 h-6 drop-shadow-[0_0_10px_rgba(251,191,36,0.45)]">
+          <path d="M22 18 Q48 26 90 25 Q132 26 158 18 Q132 14 90 15 Q48 14 22 18 Z" fill="#7f1d1d" stroke="${fillPetal}" stroke-width="1.2"/>
+          <path d="M52 16 Q66 3 82 14 Q90 0 98 14 Q114 3 128 16 Q108 20 90 19 Q72 20 52 16 Z" fill="#b45309" stroke="${fillPetal}" stroke-width="1.3"/>
+          <path d="M74 15 Q90 3 106 15 Q90 20 74 15 Z" fill="${fillPetal}" opacity="0.9"/>
+        </svg>
+      `;
+    }
+
+    function buildFloorCenserHtml(tier) {
+      if (tier === 3) {
+        return `
+          <svg viewBox="0 0 140 32" class="w-32 h-8 drop-shadow-[0_0_8px_rgba(251,191,36,0.4)]">
+            <line x1="56" y1="3" x2="60" y2="14" stroke="#fde047" stroke-width="1.5"/>
+            <circle cx="56" cy="3" r="1.4" fill="#ef4444"/>
+            <line x1="63" y1="2" x2="65" y2="14" stroke="#fde047" stroke-width="1.5"/>
+            <circle cx="63" cy="2" r="1.4" fill="#ef4444"/>
+            <line x1="70" y1="1" x2="70" y2="14" stroke="#fef08a" stroke-width="1.7"/>
+            <circle cx="70" cy="1" r="1.6" fill="#f97316"/>
+            <line x1="77" y1="2" x2="75" y2="14" stroke="#fde047" stroke-width="1.5"/>
+            <circle cx="77" cy="2" r="1.4" fill="#ef4444"/>
+            <line x1="84" y1="3" x2="80" y2="14" stroke="#fde047" stroke-width="1.5"/>
+            <circle cx="84" cy="3" r="1.4" fill="#ef4444"/>
+            <path d="M46 13 Q70 11 94 13 L89 24 Q70 28 51 24 Z" fill="#d97706" stroke="#fef08a" stroke-width="1.3"/>
+            <circle cx="70" cy="19" r="2.2" fill="#10b981" stroke="#fef9c3" stroke-width="0.8"/>
+            <rect x="22" y="26" width="96" height="4.5" rx="2" fill="#991b1b" stroke="#fde047" stroke-width="1"/>
+          </svg>
+        `;
+      }
+      if (tier === 2) {
+        return `
+          <svg viewBox="0 0 130 30" class="w-28 h-7">
+            <line x1="56" y1="2" x2="59" y2="13" stroke="#fbbf24" stroke-width="1.6"/>
+            <circle cx="56" cy="2" r="1.4" fill="#ef4444"/>
+            <line x1="65" y1="1" x2="65" y2="13" stroke="#fde047" stroke-width="1.7"/>
+            <circle cx="65" cy="1" r="1.5" fill="#f97316"/>
+            <line x1="74" y1="2" x2="71" y2="13" stroke="#fbbf24" stroke-width="1.6"/>
+            <circle cx="74" cy="2" r="1.4" fill="#ef4444"/>
+            <path d="M47 13 Q65 11 83 13 L79 23 Q65 26 51 23 Z" fill="#b45309" stroke="#fde047" stroke-width="1.3"/>
+            <rect x="24" y="24" width="82" height="4" rx="1.5" fill="#7f1d1d" stroke="#fbbf24" stroke-width="0.9"/>
+          </svg>
+        `;
+      }
+      return `
+        <svg viewBox="0 0 120 28" class="w-28 h-7">
+          <line x1="52" y1="2" x2="54" y2="12" stroke="#d97706" stroke-width="1.6"/>
+          <circle cx="52" cy="2" r="1.4" fill="#ef4444"/>
+          <line x1="60" y1="1" x2="60" y2="12" stroke="#d97706" stroke-width="1.6"/>
+          <circle cx="60" cy="1" r="1.4" fill="#ef4444"/>
+          <line x1="68" y1="2" x2="66" y2="12" stroke="#d97706" stroke-width="1.6"/>
+          <circle cx="68" cy="2" r="1.4" fill="#ef4444"/>
+          <path d="M44 12 Q60 10 76 12 L73 22 Q60 25 47 22 Z" fill="#b45309" stroke="#fbbf24" stroke-width="1.2"/>
+          <rect x="20" y="23" width="80" height="4" rx="1.5" fill="#7f1d1d" stroke="#f59e0b" stroke-width="0.8"/>
+        </svg>
+      `;
+    }
+
+    function applyFloorLuxuryTheme(floorNum, unlocked, pantheon) {
+      const cfg = FLOOR_LUXURY_CONFIG[floorNum] || FLOOR_LUXURY_CONFIG[1];
+      const floorInfo = getFloorInfo(floorNum);
+      const readyCount = pantheon.deities.filter(d => d.imgKey && DEITY_PORTRAITS[d.imgKey]).length;
+      const dummyCount = pantheon.deities.length - readyCount;
+
+      const bannerEl = document.getElementById("floor-luxury-banner");
+      if (bannerEl) {
+        bannerEl.className = cfg.bannerCls;
+        bannerEl.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span class="text-[11px] font-extrabold text-amber-200 truncate">${cfg.tierLabel}</span>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-950/90 text-amber-300 border border-amber-400/50 shrink-0">${cfg.chineseBadge}</span>
+              </div>
+              <p class="text-[10px] text-amber-100/80 truncate mt-0.5">${cfg.archTitle} · ${cfg.materialNote}</p>
+            </div>
+            <div class="text-right shrink-0 space-y-0.5">
+              <span class="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold ${unlocked ? "bg-emerald-500/25 text-emerald-300 border border-emerald-400/50" : "bg-amber-500/20 text-amber-200 border border-amber-400/55"}">
+                ${unlocked ? "✓ เปิดสักการะแล้ว" : "👁️ ชมวิหารล่วงหน้า"}
+              </span>
+              <div class="text-[9px] text-amber-200/85 font-medium">
+                ภาพจริง ${readyCount}/7${dummyCount > 0 ? ` · Dummy ${dummyCount}` : ""}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      const altarCard = document.getElementById("altar-card");
+      if (altarCard) {
+        altarCard.className = `${cfg.cardCls} ${cfg.padXCls}`;
+        altarCard.style.background = cfg.cardBg;
+        altarCard.style.boxShadow = cfg.cardShadow;
+      }
+
+      const cornersEl = document.getElementById("altar-corners");
+      if (cornersEl) {
+        if (cfg.cornerMode === "none") {
+          cornersEl.classList.add("hidden");
+          cornersEl.innerHTML = "";
+        } else {
+          cornersEl.classList.remove("hidden");
+          cornersEl.innerHTML = buildFloorCornersHtml(cfg.cornerMode);
+        }
+      }
+
+      const pilL = document.getElementById("altar-pillar-left");
+      const pilR = document.getElementById("altar-pillar-right");
+      if (pilL && pilR) {
+        if (cfg.pillarMode === "none") {
+          pilL.classList.add("hidden");
+          pilR.classList.add("hidden");
+          pilL.innerHTML = "";
+          pilR.innerHTML = "";
+        } else {
+          pilL.classList.remove("hidden");
+          pilR.classList.remove("hidden");
+          pilL.innerHTML = buildFloorPillarHtml(cfg.pillarMode, "left");
+          pilR.innerHTML = buildFloorPillarHtml(cfg.pillarMode, "right");
+        }
+      }
+
+      const canopyEl = document.getElementById("altar-canopy-top");
+      if (canopyEl) {
+        const canopyHtml = buildFloorCanopyHtml(floorNum);
+        if (canopyHtml) {
+          canopyEl.classList.remove("hidden");
+          canopyEl.innerHTML = canopyHtml;
+        } else {
+          canopyEl.classList.add("hidden");
+          canopyEl.innerHTML = "";
+        }
+      }
+
+      const plaqueBar = document.getElementById("altar-plaque-bar");
+      if (plaqueBar) plaqueBar.className = cfg.plaqueCls;
+
+      const portraitFrame = document.getElementById("deity-portrait-frame");
+      if (portraitFrame) {
+        portraitFrame.className = `relative z-10 ${cfg.frameSizeCls} overflow-hidden flex items-center justify-center`;
+        portraitFrame.style.cssText = cfg.frameStyle;
+      }
+
+      const aureoleEl = document.getElementById("altar-portrait-aureole");
+      if (aureoleEl) {
+        if (cfg.aureoleMode === "none") {
+          aureoleEl.classList.add("hidden");
+          aureoleEl.innerHTML = "";
+        } else {
+          aureoleEl.classList.remove("hidden");
+          if (cfg.aureoleMode === "sunburst7") {
+            aureoleEl.innerHTML = `
+              <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full luxury-rays-tier7"></div>
+              <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 rounded-full border border-amber-200/55"></div>
+            `;
+          } else if (cfg.aureoleMode === "sunburst6") {
+            aureoleEl.innerHTML = `
+              <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-60 rounded-full luxury-rays-tier6"></div>
+              <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-52 h-52 rounded-full border border-amber-300/45"></div>
+            `;
+          } else if (cfg.aureoleMode === "mandala") {
+            aureoleEl.innerHTML = `
+              <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 rounded-full border-2 border-dashed border-amber-400/50 bg-amber-500/10"></div>
+            `;
+          } else {
+            aureoleEl.innerHTML = `
+              <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-52 h-52 rounded-full bg-amber-500/10 border border-amber-400/30"></div>
+            `;
+          }
+        }
+      }
+
+      const lanL = document.getElementById("altar-lantern-left");
+      const lanR = document.getElementById("altar-lantern-right");
+      if (lanL) lanL.innerHTML = buildFloorLanternHtml(cfg.lanternTier);
+      if (lanR) lanR.innerHTML = buildFloorLanternHtml(cfg.lanternTier);
+
+      const lotusEl = document.getElementById("altar-lotus-pedestal");
+      if (lotusEl) {
+        if (cfg.lotusBase) {
+          lotusEl.classList.remove("hidden");
+          lotusEl.innerHTML = buildFloorLotusPedestalHtml(floorNum);
+        } else {
+          lotusEl.classList.add("hidden");
+          lotusEl.innerHTML = "";
+        }
+      }
+
+      const censerEl = document.getElementById("altar-incense-pedestal");
+      if (censerEl) censerEl.innerHTML = buildFloorCenserHtml(cfg.censerTier);
+
+      const perkBadge = document.getElementById("deity-tier-perk-badge");
+      if (perkBadge) {
+        const mult = getTierMultiplier(floorNum);
+        if (floorNum >= 2) {
+          perkBadge.classList.remove("hidden");
+          perkBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-200 border border-amber-400/55";
+          perkBadge.textContent = mult > 1 ? `✨ บารมีชั้น ${floorNum} · แต้ม x${mult}` : `✨ วิหารชั้น ${floorNum}`;
+        } else {
+          perkBadge.classList.add("hidden");
+        }
+      }
+
+      const stripTitle = document.getElementById("floor-strip-title");
+      if (stripTitle) {
+        stripTitle.textContent = floorNum === 1
+          ? "🐉 เทพประจำวัน (ไหว้วันละ 1 ครั้ง)"
+          : `🏯 ทำเนียบองค์เทพชั้น ${floorNum} · ${floorInfo.chineseSeal} (แตะเพื่อชมภาพบูชา)`;
+      }
     }
 
     const DAY_META = [
@@ -874,13 +1499,13 @@
         tag: "เปิดปัจจุบัน · ชั้นที่ 1 (神階 1)",
         desc: "จัดเรียงตามลำดับชั้นเทพจีนแท้: องค์เทพผู้เฝ้าประตู เจ้าที่ พยัคฆ์ศักดิ์สิทธิ์ แป๊ะกง เทพเตาไฟ เจ้าแม่ทับทิม (วันเกิดศุกร์) และหลักเมือง",
         deities: [
-          { imgKey: "menshen", name: "เทพทวารบาล เมิ่งเสิน (門神 · ฉินสูเป่า-อวี้ฉือจิงเต๋อ)", title: "เทพผู้พิทักษ์ประตูตำหนัก ขับไล่พลังร้ายและเปิดทางโชคลาภ", astroTag: "กัมมะ (อาทิตย์ ๑) · คุ้มครองการงานหน้าด่าน", focus: "ป้องกันอัปมงคล · เปิดทางลูกค้า · มั่นคงหน้าด่าน", blessing: "ทวารบาลผู้เกรียงไกรจะคอยเฝ้าประตูโชคลาภ คัดกรองสิ่งไม่ดีออกไปและเปิดรับกัลยาณมิตรกับโอกาสงามเข้ามา", topics: ["งานมั่นคง", "กันคนคิดร้าย", "เปิดทางรับทรัพย์"] },
-          { imgKey: "tudi", name: "ตี่จู้เอี้ย เจ้าที่ประจำเรือน (地主爺 · 五方五土龍神)", title: "เทพผู้ครองธาตุดินทั้งห้าทิศ แห่งความร่มเย็นและหลักฐานมั่นคง", astroTag: "เดช (จันทร์ ๒ กุมลัคนาพิจิก) · เสริมบารมีในเรือน", focus: "อยู่เย็นเป็นสุข · ที่อยู่อาศัยรุ่งเรือง · เงินเข้าบ้าน", blessing: "เจ้าที่ตี่จู้เอี้ยจะประสานธาตุทั้งห้าในบ้านและที่ทำงานให้สงบราบรื่น นำพาโภคทรัพย์และคนในครอบครัวให้ปรองดอง", topics: ["บ้าน/ร้านค้าร่มเย็น", "ค้าขายในเรือน", "ฐานมั่นคง"] },
-          { imgKey: "huye", name: "เสือเจ้าที่ หู่เหยีย (虎爺 · พยัคฆ์ใต้ฐานแท่นบูชา)", title: "พยัคฆ์ศักดิ์สิทธิ์ผู้ปราบปรามภัยมืดและคาบโชคลาภก้อนใหญ่", astroTag: "ศรี + ตนุลัคนา (อังคาร ๓) · พลังประจำตัวเจ้าชะตา", focus: "คาบเงินคาบทอง · ป้องกันภัยแฝง · กล้าตัดสินใจ", blessing: "เจ้าพ่อเสือหู่เหยียจะคุ้มครองแคล้วคลาด ปัดเป่าศัตรูที่มองไม่เห็น และคาบโชคลาภโอกาสทองมาวางแทบเท้า", topics: ["โชคลาภเงินทอง", "แคล้วคลาด", "เสริมอำนาจ"] },
-          { imgKey: "baigong", name: "แป๊ะกง / โทวตี้กง (土地公 · 福德正神)", title: "เทพผู้เฒ่าแห่งผืนดิน ผู้ประทานโภคทรัพย์และความอุดมสมบูรณ์", astroTag: "มูละ (พุธ ๔) · เสริมธาตุน้ำ-ทรัพย์โดยตรง", focus: "การเงินคล่องตัว · เมตตามหานิยม · ค้าขายมั่งคั่ง", blessing: "รอยยิ้มอันเปี่ยมเมตตาของแป๊ะกงจะเปิดคลังทรัพย์แห่งผืนดิน ให้การเงินหมุนเวียนคล่องตัว มีเงินเก็บและผู้ใหญ่เอ็นดู", topics: ["การเงิน/ค้าขาย", "มีเงินเก็บ", "ผู้ใหญ่เอ็นดู"] },
-          { imgKey: "zaojun", name: "เทพเจ้าเตาไฟ จ้าวหวางเหยีย (灶君 · 司命真君)", title: "เทพผู้ดูแลความบริบูรณ์ในเรือนและบันทึกคุณความดีต่อสวรรค์", astroTag: "มนตรี (พฤหัส ๕) · หนุนผู้ใหญ่อุปถัมภ์", focus: "อิ่มหนำสำราญ · ครอบครัวเป็นปึกแผ่น · ถ้อยคำน่าเชื่อถือ", blessing: "เทพเจ้าเตาไฟจะนำความดีความชอบขึ้นทูลเบื้องบน เปิดทางผู้ใหญ่อุปถัมภ์ และดลบันดาลให้ในเรือนอุดมสมบูรณ์ไม่ขาด", topics: ["ผู้ใหญ่อุปถัมภ์", "ครอบครัวเป็นสุข", "เจรจาราบรื่น"] },
-          { imgKey: "mazu", name: "เจ้าแม่ทับทิม หม่าโจ้ว (媽祖 · 天上聖母)", title: "พระแม่ผู้คุ้มครองการเดินทาง การค้า และมิตรไมตรีอันประเสริฐ", astroTag: "บริวาร (ศุกร์ ๖ วันเกิด · ธาตุน้ำหนุนดวง)", focus: "เดินทางปลอดภัย · ค้าขายทางไกล · บริวารซื่อสัตย์", blessing: "แสงตะเกียงศักดิ์สิทธิ์ของเจ้าแม่ทับทิมจะส่องนำทางในทุกการเดินทางและการค้าขาย ประทานมิตรแท้และบริวารที่ดี", topics: ["เดินทาง/ขนส่ง", "ธุรกิจรุ่งเรือง", "บริวารจงรัก"] },
-          { imgKey: "chenghuang", name: "เทพเจ้าหลักเมือง เฉิงหวงเยีย (城隍爺)", title: "มหาตุลาการผู้รักษาความเที่ยงธรรมและปราบปรามสิ่งอัปมงคล", astroTag: "อุตสาหะ (เสาร์ ๗) · สยบอุปสรรคและความไม่เป็นธรรม", focus: "คดีความ/สัญญาเป็นธรรม · พ้นมลทิน · หลักฐานมั่นคง", blessing: "ความเที่ยงตรงแห่งองค์เฉิงหวงเยียจะคุ้มครองผู้ประพฤติดีให้พ้นคำครหา ปราบอุปสรรคขัดขวาง และคุ้มครองให้ตั้งมั่น", topics: ["คดี/เอกสารเป็นธรรม", "กันคนกลั่นแกล้ง", "มั่นคงยั่งยืน"] }
+          { imgKey: "menshen", gender: "male", name: "เทพทวารบาล เมิ่งเสิน (門神 · ฉินสูเป่า-อวี้ฉือจิงเต๋อ)", title: "เทพผู้พิทักษ์ประตูตำหนัก ขับไล่พลังร้ายและเปิดทางโชคลาภ", astroTag: "กัมมะ (อาทิตย์ ๑) · คุ้มครองการงานหน้าด่าน", focus: "ป้องกันอัปมงคล · เปิดทางลูกค้า · มั่นคงหน้าด่าน", blessing: "ทวารบาลผู้เกรียงไกรจะคอยเฝ้าประตูโชคลาภ คัดกรองสิ่งไม่ดีออกไปและเปิดรับกัลยาณมิตรกับโอกาสงามเข้ามา", topics: ["งานมั่นคง", "กันคนคิดร้าย", "เปิดทางรับทรัพย์"] },
+          { imgKey: "tudi", gender: "male", name: "ตี่จู้เอี้ย เจ้าที่ประจำเรือน (地主爺 · 五方五土龍神)", title: "เทพผู้ครองธาตุดินทั้งห้าทิศ แห่งความร่มเย็นและหลักฐานมั่นคง", astroTag: "เดช (จันทร์ ๒ กุมลัคนาพิจิก) · เสริมบารมีในเรือน", focus: "อยู่เย็นเป็นสุข · ที่อยู่อาศัยรุ่งเรือง · เงินเข้าบ้าน", blessing: "เจ้าที่ตี่จู้เอี้ยจะประสานธาตุทั้งห้าในบ้านและที่ทำงานให้สงบราบรื่น นำพาโภคทรัพย์และคนในครอบครัวให้ปรองดอง", topics: ["บ้าน/ร้านค้าร่มเย็น", "ค้าขายในเรือน", "ฐานมั่นคง"] },
+          { imgKey: "huye", gender: "male", name: "เสือเจ้าที่ หู่เหยีย (虎爺 · พยัคฆ์ใต้ฐานแท่นบูชา)", title: "พยัคฆ์ศักดิ์สิทธิ์ผู้ปราบปรามภัยมืดและคาบโชคลาภก้อนใหญ่", astroTag: "ศรี + ตนุลัคนา (อังคาร ๓) · พลังประจำตัวเจ้าชะตา", focus: "คาบเงินคาบทอง · ป้องกันภัยแฝง · กล้าตัดสินใจ", blessing: "เจ้าพ่อเสือหู่เหยียจะคุ้มครองแคล้วคลาด ปัดเป่าศัตรูที่มองไม่เห็น และคาบโชคลาภโอกาสทองมาวางแทบเท้า", topics: ["โชคลาภเงินทอง", "แคล้วคลาด", "เสริมอำนาจ"] },
+          { imgKey: "baigong", gender: "male", name: "แป๊ะกง / โทวตี้กง (土地公 · 福德正神)", title: "เทพผู้เฒ่าแห่งผืนดิน ผู้ประทานโภคทรัพย์และความอุดมสมบูรณ์", astroTag: "มูละ (พุธ ๔) · เสริมธาตุน้ำ-ทรัพย์โดยตรง", focus: "การเงินคล่องตัว · เมตตามหานิยม · ค้าขายมั่งคั่ง", blessing: "รอยยิ้มอันเปี่ยมเมตตาของแป๊ะกงจะเปิดคลังทรัพย์แห่งผืนดิน ให้การเงินหมุนเวียนคล่องตัว มีเงินเก็บและผู้ใหญ่เอ็นดู", topics: ["การเงิน/ค้าขาย", "มีเงินเก็บ", "ผู้ใหญ่เอ็นดู"] },
+          { imgKey: "zaojun", gender: "male", name: "เทพเจ้าเตาไฟ จ้าวหวางเหยีย (灶君 · 司命真君)", title: "เทพผู้ดูแลความบริบูรณ์ในเรือนและบันทึกคุณความดีต่อสวรรค์", astroTag: "มนตรี (พฤหัส ๕) · หนุนผู้ใหญ่อุปถัมภ์", focus: "อิ่มหนำสำราญ · ครอบครัวเป็นปึกแผ่น · ถ้อยคำน่าเชื่อถือ", blessing: "เทพเจ้าเตาไฟจะนำความดีความชอบขึ้นทูลเบื้องบน เปิดทางผู้ใหญ่อุปถัมภ์ และดลบันดาลให้ในเรือนอุดมสมบูรณ์ไม่ขาด", topics: ["ผู้ใหญ่อุปถัมภ์", "ครอบครัวเป็นสุข", "เจรจาราบรื่น"] },
+          { imgKey: "mazu", gender: "female", name: "เจ้าแม่ทับทิม หม่าโจ้ว (媽祖 · 天上聖母)", title: "พระแม่ผู้คุ้มครองการเดินทาง การค้า และมิตรไมตรีอันประเสริฐ", astroTag: "บริวาร (ศุกร์ ๖ วันเกิด · ธาตุน้ำหนุนดวง)", focus: "เดินทางปลอดภัย · ค้าขายทางไกล · บริวารซื่อสัตย์", blessing: "แสงตะเกียงศักดิ์สิทธิ์ของเจ้าแม่ทับทิมจะส่องนำทางในทุกการเดินทางและการค้าขาย ประทานมิตรแท้และบริวารที่ดี", topics: ["เดินทาง/ขนส่ง", "ธุรกิจรุ่งเรือง", "บริวารจงรัก"] },
+          { imgKey: "chenghuang", gender: "male", name: "เทพเจ้าหลักเมือง เฉิงหวงเยีย (城隍爺)", title: "มหาตุลาการผู้รักษาความเที่ยงธรรมและปราบปรามสิ่งอัปมงคล", astroTag: "อุตสาหะ (เสาร์ ๗) · สยบอุปสรรคและความไม่เป็นธรรม", focus: "คดีความ/สัญญาเป็นธรรม · พ้นมลทิน · หลักฐานมั่นคง", blessing: "ความเที่ยงตรงแห่งองค์เฉิงหวงเยียจะคุ้มครองผู้ประพฤติดีให้พ้นคำครหา ปราบอุปสรรคขัดขวาง และคุ้มครองให้ตั้งมั่น", topics: ["คดี/เอกสารเป็นธรรม", "กันคนกลั่นแกล้ง", "มั่นคงยั่งยืน"] }
         ]
       },
       generals_wealth: {
@@ -890,13 +1515,13 @@
         tag: "ปลดล็อก Tier 2",
         desc: "ลำดับชั้นแม่ทัพแนวหน้าและเทพผู้ดูแลทรัพย์สิน-วาสนาทางโลกียะ สูงกว่าเทพเจ้าที่ชั้นฐาน",
         deities: [
-          { imgKey: "guanping", name: "ขุนพลกวนผิง & เทพม้าอ๋อง (關平 · 馬王爺)", title: "แม่ทัพพิทักษ์ธรรมแห่งวิหารหน้า", focus: "ความซื่อสัตย์ · คุ้มครองบริวาร · ชัยชนะ", blessing: "บารมีแห่งขุนพลแนวหน้าจะเสริมพลังความมั่นคงในการงานและคุ้มครองผู้ประพฤติธรรม", topics: ["งานมั่นคง", "ชนะการแข่งขัน", "คุ้มครองบริวาร"] },
-          { imgKey: "yuelao", name: "เทพเจ้าเย่ว์เหล่า (月老 · ผู้เฒ่าจันทรา)", title: "เทพผู้ผูกด้ายแดงแห่งวาสนา & มิตรภาพ", focus: "ความรัก · เสน่ห์ · คู่ค้า/กัลยาณมิตร", blessing: "ด้ายแดงแห่งวาสนาจะดึงดูดคู่ครองที่ดีและกัลยาณมิตรที่เกื้อหนุนกันในชีวิตการงาน", topics: ["ความรักสมหวัง", "เจอมิตรแท้/หุ้นส่วน", "เมตตามหานิยม"] },
-          { imgKey: "nezha", name: "องค์นาจา ซาไท้จื้อ (哪吒 · 中壇元帥)", title: "จงถานหยวนซ่วย แม่ทัพน้อยสวรรค์ผู้คล่องแคล่ว", astroTag: "เหมาะกับดาวศรี อังคาร (๓)", focus: "คล่องตัวทันใจ · เดินทาง · ฝ่าวิกฤต", blessing: "พลังแห่งหอกอัคคีและวงล้อลมไฟจะพัดพาความติดขัดให้คลี่คลายทันใจ เดินทางแคล้วคลาดปลอดภัย", topics: ["งานเดินหน้าไว", "ลุยโปรเจกต์ใหม่", "เดินทางปลอดภัย"] },
-          { imgKey: "caishen", name: "เทพเจ้าไฉ่ซิงเอี้ย 5 ทิศ (五路財神)", title: "จ้าวกงหมิง & เทพโชคลาภทั้ง 5 ทิศทาง", astroTag: "เสริมธาตุไม้-ทรัพย์ (มูละ พุธ ๔)", focus: "เปิดคลังทรัพย์ · ค้าขายร่ำรวย · ลาภผล", blessing: "ประตูทรัพย์ทั้ง 5 ทิศจะเปิดรับโชคลาภและผลกำไรทางการค้าให้หลั่งไหลเข้ามาอย่างต่อเนื่อง", topics: ["เปิดคลังทรัพย์", "ค้าขายร่ำรวย", "การลงทุน/ปิดดีล"] },
-          { artKey: "fulushou", motif: "fulushou", name: "สามเทพดาวมงคล ฮก ลก ซิ่ว (福祿壽)", title: "วาสนา ยศศักดิ์ และอายุวัฒนะ", focus: "เลื่อนยศ/โบนัส · สุขภาพ · สมบูรณ์พูนสุข", blessing: "ดาวมงคลทั้งสามจะประทานวาสนา โภคทรัพย์ ตำแหน่งหน้าที่การงาน และอายุยืนยาว", topics: ["เลื่อนตำแหน่ง/เงินเดือน", "ชีวิตสมบูรณ์", "ครอบครัวอายุยืน"] },
-          { artKey: "wukong", motif: "ruyi", name: "ไต้เสี่ยฮุกโจ้ว / เจ้าพ่อเห้งเจีย (齊天大聖)", title: "พญาวานรจอมปัญญาผู้พลิกแพลงแก้ปัญหา", focus: "ไหวพริบเฉียบคม · แก้ปัญหาเฉพาะหน้า · กล้าได้กล้าเสีย", blessing: "ปัญญาอันว่องไวของไต้เสี่ยฮุกโจ้วจะนำทางให้พบทางออกในทุกสถานการณ์และเปลี่ยนวิกฤตเป็นโอกาส", topics: ["แก้ปัญหาเฉพาะหน้า", "คิดสร้างสรรค์", "เจรจาพลิกเกม"] },
-          { artKey: "erlangshen", motif: "trident", name: "ขุนพลเอ้อหลางเสิน (二郎神 · เทพสามตา)", title: "แม่ทัพสวรรค์ผู้มองทะลุความเท็จ & ปราบมาร", focus: "มองทะลุปัญหา · ชนะคดี/คู่แข่ง · ปกป้อง", blessing: "เนตรทิพย์ที่สามจะช่วยให้มองเห็นโอกาสและภัยที่ซ่อนอยู่ ชนะอุปสรรคและคนคิดร้ายได้อย่างเด็ดขาด", topics: ["ชนะคดี/คู่แข่ง", "มองคนออก", "ป้องกันภัยมืด"] }
+          { imgKey: "guanping", gender: "male", name: "ขุนพลกวนผิง & เทพม้าอ๋อง (關平 · 馬王爺)", title: "แม่ทัพพิทักษ์ธรรมแห่งวิหารหน้า", focus: "ความซื่อสัตย์ · คุ้มครองบริวาร · ชัยชนะ", blessing: "บารมีแห่งขุนพลแนวหน้าจะเสริมพลังความมั่นคงในการงานและคุ้มครองผู้ประพฤติธรรม", topics: ["งานมั่นคง", "ชนะการแข่งขัน", "คุ้มครองบริวาร"] },
+          { imgKey: "yuelao", gender: "male", name: "เทพเจ้าเย่ว์เหล่า (月老 · ผู้เฒ่าจันทรา)", title: "เทพผู้ผูกด้ายแดงแห่งวาสนา & มิตรภาพ", focus: "ความรัก · เสน่ห์ · คู่ค้า/กัลยาณมิตร", blessing: "ด้ายแดงแห่งวาสนาจะดึงดูดคู่ครองที่ดีและกัลยาณมิตรที่เกื้อหนุนกันในชีวิตการงาน", topics: ["ความรักสมหวัง", "เจอมิตรแท้/หุ้นส่วน", "เมตตามหานิยม"] },
+          { imgKey: "nezha", gender: "male", name: "องค์นาจา ซาไท้จื้อ (哪吒 · 中壇元帥)", title: "จงถานหยวนซ่วย แม่ทัพน้อยสวรรค์ผู้คล่องแคล่ว", astroTag: "เหมาะกับดาวศรี อังคาร (๓)", focus: "คล่องตัวทันใจ · เดินทาง · ฝ่าวิกฤต", blessing: "พลังแห่งหอกอัคคีและวงล้อลมไฟจะพัดพาความติดขัดให้คลี่คลายทันใจ เดินทางแคล้วคลาดปลอดภัย", topics: ["งานเดินหน้าไว", "ลุยโปรเจกต์ใหม่", "เดินทางปลอดภัย"] },
+          { imgKey: "caishen", gender: "male", name: "เทพเจ้าไฉ่ซิงเอี้ย 5 ทิศ (五路財神)", title: "จ้าวกงหมิง & เทพโชคลาภทั้ง 5 ทิศทาง", astroTag: "เสริมธาตุไม้-ทรัพย์ (มูละ พุธ ๔)", focus: "เปิดคลังทรัพย์ · ค้าขายร่ำรวย · ลาภผล", blessing: "ประตูทรัพย์ทั้ง 5 ทิศจะเปิดรับโชคลาภและผลกำไรทางการค้าให้หลั่งไหลเข้ามาอย่างต่อเนื่อง", topics: ["เปิดคลังทรัพย์", "ค้าขายร่ำรวย", "การลงทุน/ปิดดีล"] },
+          { artKey: "fulushou", gender: "male", motif: "fulushou", name: "สามเทพดาวมงคล ฮก ลก ซิ่ว (福祿壽)", title: "วาสนา ยศศักดิ์ และอายุวัฒนะ", focus: "เลื่อนยศ/โบนัส · สุขภาพ · สมบูรณ์พูนสุข", blessing: "ดาวมงคลทั้งสามจะประทานวาสนา โภคทรัพย์ ตำแหน่งหน้าที่การงาน และอายุยืนยาว", topics: ["เลื่อนตำแหน่ง/เงินเดือน", "ชีวิตสมบูรณ์", "ครอบครัวอายุยืน"] },
+          { artKey: "wukong", gender: "male", motif: "ruyi", name: "ไต้เสี่ยฮุกโจ้ว / เจ้าพ่อเห้งเจีย (齊天大聖)", title: "พญาวานรจอมปัญญาผู้พลิกแพลงแก้ปัญหา", focus: "ไหวพริบเฉียบคม · แก้ปัญหาเฉพาะหน้า · กล้าได้กล้าเสีย", blessing: "ปัญญาอันว่องไวของไต้เสี่ยฮุกโจ้วจะนำทางให้พบทางออกในทุกสถานการณ์และเปลี่ยนวิกฤตเป็นโอกาส", topics: ["แก้ปัญหาเฉพาะหน้า", "คิดสร้างสรรค์", "เจรจาพลิกเกม"] },
+          { artKey: "erlangshen", gender: "male", motif: "trident", name: "ขุนพลเอ้อหลางเสิน (二郎神 · เทพสามตา)", title: "แม่ทัพสวรรค์ผู้มองทะลุความเท็จ & ปราบมาร", focus: "มองทะลุปัญหา · ชนะคดี/คู่แข่ง · ปกป้อง", blessing: "เนตรทิพย์ที่สามจะช่วยให้มองเห็นโอกาสและภัยที่ซ่อนอยู่ ชนะอุปสรรคและคนคิดร้ายได้อย่างเด็ดขาด", topics: ["ชนะคดี/คู่แข่ง", "มองคนออก", "ป้องกันภัยมืด"] }
         ]
       },
       imperial_stars: {
@@ -906,13 +1531,13 @@
         tag: "ปลดล็อก Tier 3",
         desc: "เทพผู้ได้รับยศชั้น 'ตี้จวิน' (จักรพรรดิธรรม) และหมู่ดาวรักษาชะตา-ไท้ส่วยเอี้ย",
         deities: [
-          { imgKey: "guanyu", name: "เจ้าพ่อกวนอู · กวนเซิ่งตี้จวิน (關聖帝君)", title: "มหาเทพบู๊ผู้ทรงคุณธรรมแห่งฟ้า-ดิน", astroTag: "บารมีการงานสูงสุด (อาทิตย์กัมมะ)", focus: "อำนาจบารมี · ความน่าเชื่อถือ · ชัยชนะยั่งยืน", blessing: "บารมีแห่งกวนเซิ่งตี้จวินจะเสริมเกียรติยศ ความไว้วางใจจากผู้ใหญ่ และชัยชนะอันทรงเกียรติในหน้าที่การงาน", topics: ["บารมีการงาน", "ผู้ใหญ่ไว้วางใจ", "ทำธุรกิจซื่อสัตย์รุ่ง"] },
-          { artKey: "taiyin", motif: "taiyin", name: "เทพธิดาดวงจันทร์ ไท้อิมแชกุง (太陰星君)", title: "เทวีผู้ครองแสงจันทราแห่งความสงบเย็น", focus: "จิตใจผ่องใส · เสน่ห์เมตตา · ความละเอียดอ่อน", blessing: "แสงจันทร์อันเยือกเย็นจะช่วยกล่อมเกลาอารมณ์ให้แจ่มใสและนำพาเมตตามหานิยมจากคนรอบข้าง", topics: ["ใจสงบผ่องใส", "คนเมตตาเอ็นดู", "งานศิลป์/ความงาม"] },
-          { artKey: "taisui", motif: "bagua", name: "องค์ไท้ส่วยเอี้ยประจำปี (太歲星君)", title: "เทพผู้ควบคุมดวงชะตาและวาระแห่งปี", focus: "แก้ปีชง · หนุนชะตารายปี · ร้ายกลายเป็นดี", blessing: "บารมีองค์ไท้ส่วยเอี้ยจะปรับกระแสชะตาประจำปีให้สมดุล แคล้วคลาดจากเคราะห์ภัยและเรื่องติดขัด", topics: ["แก้ชงเสริมดวง", "ผ่านเคราะห์กรรม", "ราบรื่นตลอดปี"] },
-          { artKey: "taiyang", motif: "taiyang", name: "สุริยเทพ ไท้เอี๊ยงแชกุง (太陽星君)", title: "เทพผู้ครองแสงอาทิตย์แห่งความเที่ยงตรง", focus: "ชื่อเสียง · พลังงานบวก · ความเจริญก้าวหน้า", blessing: "รัศมีแห่งสุริยเทพจะส่องสว่างขับไล่ความหม่นหมอง เปิดโอกาสให้ความสามารถปรากฏเด่นชัด", topics: ["เด่นดังในสายงาน", "พลังกายพลังใจ", "ขจัดเรื่องมืดมน"] },
-          { imgKey: "wenchang", name: "เทพเจ้าบุ๋น เหวินชางตี้จวิน (文昌帝君)", title: "มหาเทพแห่งอักษร ปัญญา และการวางแผน", astroTag: "มนตรี (พฤหัส ๕) · ปัญญาคุมราหู", focus: "สอบ/เลื่อนขั้น · เอกสารสัญญา · ผู้ใหญ่อุปถัมภ์", blessing: "ปัญญาอันกระจ่างแจ้งแห่งเหวินชางตี้จวินจะนำทางงานเอกสาร การเรียน การสอบ และการวางแผนทุกขั้นตอน", topics: ["สอบแข่งขัน/ศึกษาต่อ", "เอกสารสัญญาแม่นยำ", "ผู้ใหญ่อุปถัมภ์"] },
-          { artKey: "zhongkui", motif: "justice", name: "ขุยซิงตี้จวิน & เทพจงขุย (魁星 · 鍾馗)", title: "เทพแห่งเกียรติยศอันดับหนึ่ง & ผู้ปราบมาร", focus: "โดดเด่นเป็นหนึ่ง · ปราบสิ่งชั่วร้าย · สง่าราศี", blessing: "ดาวขุยซิงจะชี้ทางสู่ความเป็นหนึ่ง และพลังแห่งจงขุยจะคุ้มกันให้พ้นจากสิ่งอัปมงคลทั้งปวง", topics: ["คว้ารางวัล/อันดับ 1", "ปัดเป่าสิ่งอัปมงคล", "เสริมราศีผู้นำ"] },
-          { artKey: "beidou", motif: "star", name: "เทพดาวเหนือ 7 ดวง ปักเต้าแชกุง (北斗星君)", title: "เทพผู้จารึกบัญชีอายุขัยและความมั่นคงของดวง", focus: "หนุนฐานดวง · อายุวัฒนะ · ตั้งตัวมั่นคง", blessing: "แสงดาวเหนือทั้ง 7 ดวงจะประคับประคองฐานชะตาให้หนักแน่นมั่นคงและสุขภาพยืนยาว", topics: ["เสริมฐานดวงชะตา", "อายุยืนสุขภาพดี", "มั่นคงระยะยาว"] }
+          { imgKey: "guanyu", gender: "male", name: "เจ้าพ่อกวนอู · กวนเซิ่งตี้จวิน (關聖帝君)", title: "มหาเทพบู๊ผู้ทรงคุณธรรมแห่งฟ้า-ดิน", astroTag: "บารมีการงานสูงสุด (อาทิตย์กัมมะ)", focus: "อำนาจบารมี · ความน่าเชื่อถือ · ชัยชนะยั่งยืน", blessing: "บารมีแห่งกวนเซิ่งตี้จวินจะเสริมเกียรติยศ ความไว้วางใจจากผู้ใหญ่ และชัยชนะอันทรงเกียรติในหน้าที่การงาน", topics: ["บารมีการงาน", "ผู้ใหญ่ไว้วางใจ", "ทำธุรกิจซื่อสัตย์รุ่ง"] },
+          { artKey: "taiyin", gender: "female", motif: "taiyin", name: "เทพธิดาดวงจันทร์ ไท้อิมแชกุง (太陰星君)", title: "เทวีผู้ครองแสงจันทราแห่งความสงบเย็น", focus: "จิตใจผ่องใส · เสน่ห์เมตตา · ความละเอียดอ่อน", blessing: "แสงจันทร์อันเยือกเย็นจะช่วยกล่อมเกลาอารมณ์ให้แจ่มใสและนำพาเมตตามหานิยมจากคนรอบข้าง", topics: ["ใจสงบผ่องใส", "คนเมตตาเอ็นดู", "งานศิลป์/ความงาม"] },
+          { artKey: "taisui", gender: "male", motif: "bagua", name: "องค์ไท้ส่วยเอี้ยประจำปี (太歲星君)", title: "เทพผู้ควบคุมดวงชะตาและวาระแห่งปี", focus: "แก้ปีชง · หนุนชะตารายปี · ร้ายกลายเป็นดี", blessing: "บารมีองค์ไท้ส่วยเอี้ยจะปรับกระแสชะตาประจำปีให้สมดุล แคล้วคลาดจากเคราะห์ภัยและเรื่องติดขัด", topics: ["แก้ชงเสริมดวง", "ผ่านเคราะห์กรรม", "ราบรื่นตลอดปี"] },
+          { artKey: "taiyang", gender: "male", motif: "taiyang", name: "สุริยเทพ ไท้เอี๊ยงแชกุง (太陽星君)", title: "เทพผู้ครองแสงอาทิตย์แห่งความเที่ยงตรง", focus: "ชื่อเสียง · พลังงานบวก · ความเจริญก้าวหน้า", blessing: "รัศมีแห่งสุริยเทพจะส่องสว่างขับไล่ความหม่นหมอง เปิดโอกาสให้ความสามารถปรากฏเด่นชัด", topics: ["เด่นดังในสายงาน", "พลังกายพลังใจ", "ขจัดเรื่องมืดมน"] },
+          { imgKey: "wenchang", gender: "male", name: "เทพเจ้าบุ๋น เหวินชางตี้จวิน (文昌帝君)", title: "มหาเทพแห่งอักษร ปัญญา และการวางแผน", astroTag: "มนตรี (พฤหัส ๕) · ปัญญาคุมราหู", focus: "สอบ/เลื่อนขั้น · เอกสารสัญญา · ผู้ใหญ่อุปถัมภ์", blessing: "ปัญญาอันกระจ่างแจ้งแห่งเหวินชางตี้จวินจะนำทางงานเอกสาร การเรียน การสอบ และการวางแผนทุกขั้นตอน", topics: ["สอบแข่งขัน/ศึกษาต่อ", "เอกสารสัญญาแม่นยำ", "ผู้ใหญ่อุปถัมภ์"] },
+          { artKey: "zhongkui", gender: "male", motif: "justice", name: "ขุยซิงตี้จวิน & เทพจงขุย (魁星 · 鍾馗)", title: "เทพแห่งเกียรติยศอันดับหนึ่ง & ผู้ปราบมาร", focus: "โดดเด่นเป็นหนึ่ง · ปราบสิ่งชั่วร้าย · สง่าราศี", blessing: "ดาวขุยซิงจะชี้ทางสู่ความเป็นหนึ่ง และพลังแห่งจงขุยจะคุ้มกันให้พ้นจากสิ่งอัปมงคลทั้งปวง", topics: ["คว้ารางวัล/อันดับ 1", "ปัดเป่าสิ่งอัปมงคล", "เสริมราศีผู้นำ"] },
+          { artKey: "beidou", gender: "male", motif: "star", name: "เทพดาวเหนือ 7 ดวง ปักเต้าแชกุง (北斗星君)", title: "เทพผู้จารึกบัญชีอายุขัยและความมั่นคงของดวง", focus: "หนุนฐานดวง · อายุวัฒนะ · ตั้งตัวมั่นคง", blessing: "แสงดาวเหนือทั้ง 7 ดวงจะประคับประคองฐานชะตาให้หนักแน่นมั่นคงและสุขภาพยืนยาว", topics: ["เสริมฐานดวงชะตา", "อายุยืนสุขภาพดี", "มั่นคงระยะยาว"] }
         ]
       },
       eight_immortals: {
@@ -922,13 +1547,13 @@
         tag: "ปลดล็อก Tier 4",
         desc: "ลำดับภูมิเซียนเต๋า: มนุษย์ผู้บำเพ็ญธรรมจนพ้นสังสารวัฏ ขึ้นสูงกว่าเทพโลกียะและเจ้าที่",
         deities: [
-          { artKey: "ludongbin", motif: "bagua", name: "เซียนลื่อท่งปิน (呂洞賓)", title: "จอมเซียนผู้ถือกระบี่วิเศษ & ผู้นำโป๊ยเซียน", focus: "ปัญญาธรรม · แคล้วคลาด · งานใหญ่สำเร็จ", blessing: "กระบี่วิเศษแห่งเซียนลื่อท่งปินจะตัดอุปสรรคและความลังเลใจ ประทานปัญญาและความสำเร็จอันสง่างาม", topics: ["ชนะอุปสรรค", "ไหวพริบเฉียบคม", "เลื่อนยศตำแหน่ง"] },
-          { artKey: "hexiangu", motif: "lotus", name: "เซียนเหอเซียนกู (何仙姑)", title: "เทพธิดาเซียนถือดอกบัววิเศษแห่งความเมตตา", focus: "ครอบครัวสงบ · สุขภาพ · ความรักบริสุทธิ์", blessing: "ดอกบัววิเศษแห่งเหอเซียนกูจะแผ่ความร่มเย็นเป็นสุขและสุขภาพแข็งแรงแก่ทุกคนในครอบครัว", topics: ["ครอบครัวปรองดอง", "สุขภาพผู้ใหญ่ดี", "จิตใจอ่อนโยน"] },
-          { artKey: "zhongli", motif: "fan", name: "เซียนจงหลีเฉวียน (鍾離權)", title: "ปฐมเซียนผู้ถือพัดโบกชุบชีวิต", focus: "พลิกฟื้นกิจการ · พลังชีวิต · โชคลาภ", blessing: "พัดวิเศษจะพัดเป่าความเหนื่อยล้าและเคราะห์กรรมให้จางหาย แล้วนำความเจริญรุ่งเรืองเข้ามาแทน", topics: ["ฟื้นฟูธุรกิจ", "พลังชีวิตเต็มเปี่ยม", "เปิดรับโอกาสใหม่"] },
-          { artKey: "hanxiangzi", motif: "ruyi", name: "เซียนฮั่นเซียงจื่อ (韓湘子)", title: "เซียนผู้เป่าขลุ่ยหยกประสานมิตรภาพ", focus: "วาทศิลป์ · ศิลปะ · เสน่ห์การเจรจา", blessing: "เสียงขลุ่ยสวรรค์จะดึงดูดกัลยาณมิตร คู่ค้า และแรงบันดาลใจใหม่ๆ เข้ามาสนับสนุนอย่างต่อเนื่อง", topics: ["เจรจาสำเร็จ", "งานศิลปะ/สื่อ", "คนรักใคร่สนับสนุน"] },
-          { artKey: "zhangguolao", motif: "gourd", name: "เซียนจางกั่วเหล่า (張果老)", title: "บูรพาจารย์เซียนผู้ทรงภูมิ & อายุยืน", focus: "รอบคอบ · ปัญญาผู้ใหญ่ · อายุวัฒนะ", blessing: "ภูมิปัญญาอันสุขุมจะช่วยในการตัดสินใจครั้งสำคัญ และประทานอายุวัฒนะที่แข็งแรง", topics: ["ตัดสินใจไม่พลาด", "ผู้ใหญ่เมตตา", "อายุยืนสุขภาพดี"] },
-          { artKey: "lancaihe", motif: "fan", name: "เซียนหลานไฉ่เหอ (藍采和)", title: "เซียนกระเช้าดอกไม้แห่งความเบิกบาน", focus: "โภคทรัพย์ · เสน่ห์สดใส · สร้างสรรค์", blessing: "พลังแห่งความเบิกบานจะดึงดูดลูกค้า เงินทอง และความคิดสร้างสรรค์ให้หลั่งไหลไม่ขาดสาย", topics: ["ค้าขายคึกคัก", "คิดสร้างสรรค์", "โชคลาภไหลมา"] },
-          { artKey: "tieguaili", motif: "gourd", name: "เซียนถิก๋วยลี้ & เซียนเฉากั๋วจิ้ว", title: "เซียนน้ำเต้าโอสถ & แผ่นหยกขุนนาง", focus: "เปลี่ยนวิกฤตเป็นโอกาส · รักษาโรค · เกียรติยศ", blessing: "น้ำเต้าโอสถจะปัดเป่าโรคภัย และแผ่นหยกศักดิ์สิทธิ์จะประคองเกียรติยศชื่อเสียงให้ยั่งยืน", topics: ["ฟื้นตัวจากอุปสรรค", "ชื่อเสียงเกียรติยศ", "สุขภาพแข็งแรง"] }
+          { artKey: "ludongbin", gender: "male", motif: "bagua", name: "เซียนลื่อท่งปิน (呂洞賓)", title: "จอมเซียนผู้ถือกระบี่วิเศษ & ผู้นำโป๊ยเซียน", focus: "ปัญญาธรรม · แคล้วคลาด · งานใหญ่สำเร็จ", blessing: "กระบี่วิเศษแห่งเซียนลื่อท่งปินจะตัดอุปสรรคและความลังเลใจ ประทานปัญญาและความสำเร็จอันสง่างาม", topics: ["ชนะอุปสรรค", "ไหวพริบเฉียบคม", "เลื่อนยศตำแหน่ง"] },
+          { artKey: "hexiangu", gender: "female", motif: "lotus", name: "เซียนเหอเซียนกู (何仙姑)", title: "เทพธิดาเซียนถือดอกบัววิเศษแห่งความเมตตา", focus: "ครอบครัวสงบ · สุขภาพ · ความรักบริสุทธิ์", blessing: "ดอกบัววิเศษแห่งเหอเซียนกูจะแผ่ความร่มเย็นเป็นสุขและสุขภาพแข็งแรงแก่ทุกคนในครอบครัว", topics: ["ครอบครัวปรองดอง", "สุขภาพผู้ใหญ่ดี", "จิตใจอ่อนโยน"] },
+          { artKey: "zhongli", gender: "male", motif: "fan", name: "เซียนจงหลีเฉวียน (鍾離權)", title: "ปฐมเซียนผู้ถือพัดโบกชุบชีวิต", focus: "พลิกฟื้นกิจการ · พลังชีวิต · โชคลาภ", blessing: "พัดวิเศษจะพัดเป่าความเหนื่อยล้าและเคราะห์กรรมให้จางหาย แล้วนำความเจริญรุ่งเรืองเข้ามาแทน", topics: ["ฟื้นฟูธุรกิจ", "พลังชีวิตเต็มเปี่ยม", "เปิดรับโอกาสใหม่"] },
+          { artKey: "hanxiangzi", gender: "male", motif: "ruyi", name: "เซียนฮั่นเซียงจื่อ (韓湘子)", title: "เซียนผู้เป่าขลุ่ยหยกประสานมิตรภาพ", focus: "วาทศิลป์ · ศิลปะ · เสน่ห์การเจรจา", blessing: "เสียงขลุ่ยสวรรค์จะดึงดูดกัลยาณมิตร คู่ค้า และแรงบันดาลใจใหม่ๆ เข้ามาสนับสนุนอย่างต่อเนื่อง", topics: ["เจรจาสำเร็จ", "งานศิลปะ/สื่อ", "คนรักใคร่สนับสนุน"] },
+          { artKey: "zhangguolao", gender: "male", motif: "gourd", name: "เซียนจางกั่วเหล่า (張果老)", title: "บูรพาจารย์เซียนผู้ทรงภูมิ & อายุยืน", focus: "รอบคอบ · ปัญญาผู้ใหญ่ · อายุวัฒนะ", blessing: "ภูมิปัญญาอันสุขุมจะช่วยในการตัดสินใจครั้งสำคัญ และประทานอายุวัฒนะที่แข็งแรง", topics: ["ตัดสินใจไม่พลาด", "ผู้ใหญ่เมตตา", "อายุยืนสุขภาพดี"] },
+          { artKey: "lancaihe", gender: "male", motif: "fan", name: "เซียนหลานไฉ่เหอ (藍采和)", title: "เซียนกระเช้าดอกไม้แห่งความเบิกบาน", focus: "โภคทรัพย์ · เสน่ห์สดใส · สร้างสรรค์", blessing: "พลังแห่งความเบิกบานจะดึงดูดลูกค้า เงินทอง และความคิดสร้างสรรค์ให้หลั่งไหลไม่ขาดสาย", topics: ["ค้าขายคึกคัก", "คิดสร้างสรรค์", "โชคลาภไหลมา"] },
+          { artKey: "tieguaili", gender: "male", motif: "gourd", name: "เซียนถิก๋วยลี้ & เซียนเฉากั๋วจิ้ว", title: "เซียนน้ำเต้าโอสถ & แผ่นหยกขุนนาง", focus: "เปลี่ยนวิกฤตเป็นโอกาส · รักษาโรค · เกียรติยศ", blessing: "น้ำเต้าโอสถจะปัดเป่าโรคภัย และแผ่นหยกศักดิ์สิทธิ์จะประคองเกียรติยศชื่อเสียงให้ยั่งยืน", topics: ["ฟื้นตัวจากอุปสรรค", "ชื่อเสียงเกียรติยศ", "สุขภาพแข็งแรง"] }
         ]
       },
       bodhisattvas: {
@@ -938,13 +1563,13 @@
         tag: "ปลดล็อก Tier 5",
         desc: "ภูมิพระมหาโพธิสัตว์: สูงเหนือกว่าเทพเจ้าโลกียะและเซียน เป็นผู้เปี่ยมมหาปัญญาและมหากรุณา",
         deities: [
-          { artKey: "manjushri", motif: "ruyi", name: "พระมัญชุศรีโพธิสัตว์ (文殊菩薩)", title: "พระมหาโพธิสัตว์ผู้เป็นเลิศทางมหาปัญญา", focus: "ปัญญาอันบริสุทธิ์ · การเรียน/กลยุทธ์", blessing: "พระแสงดาบแห่งปัญญาจะตัดความมืดบอดและอวิชชา เปิดแสงสว่างทางความคิดและการตัดสินใจ", topics: ["สติปัญญาเป็นเลิศ", "สอบ/วิจัยสำเร็จ", "มองการณ์ไกล"] },
-          { imgKey: "guanyin", name: "พระแม่กวนอิม กวนซื่ออินผู่ซ่า (觀世音菩薩)", title: "พระมหาโพธิสัตว์ผู้ทรงมหากรุณาฟังเสียงทุกข์แห่งโลก", astroTag: "บารมีเมตตาคลายร้อน (จันทร์ลัคนาพิจิก)", focus: "มหากรุณา · แคล้วคลาด · สุขภาพ & สงบเย็น", blessing: "ด้วยมหากรุณาอันบริสุทธิ์ ขอให้ความทุกข์โศกคลี่คลาย จิตใจสงบเย็น และครอบครัวอยู่เย็นเป็นสุข", topics: ["จิตใจสงบเย็น", "สุขภาพแข็งแรง", "พ้นทุกข์พ้นภัย"] },
-          { artKey: "mahasthamaprapta", motif: "halo", name: "พระมหาสถามปราปต์โพธิสัตว์ (大勢至菩薩)", title: "พระโพธิสัตว์แห่งแสงปัญญาอันตั้งมั่น", focus: "กำลังใจแกร่ง · ฝ่าวิกฤต · สัมฤทธิ์ผล", blessing: "พลังแห่งปัญญาที่ตั้งมั่นจะช่วยให้ก้าวผ่านทุกความท้าทายและตั้งหลักชีวิตได้อย่างมั่นคง", topics: ["พลังใจไม่ย่อท้อ", "ผ่านพ้นวิกฤต", "งานใหญ่สำเร็จ"] },
-          { artKey: "maitreya", motif: "coin5", name: "พระเมตไตรย / พระสังกัจจายน์ (彌勒菩薩)", title: "พระโพธิสัตว์แห่งความเมตตาเบิกบาน & โภคทรัพย์", focus: "โชคลาภมหาศาล · ใจกว้างเป็นสุข · ร่ำรวย", blessing: "รอยยิ้มแห่งพระเมตไตรยจะเปิดรับโชคลาภและความอุดมสมบูรณ์พร้อมจิตใจที่เปี่ยมสุข", topics: ["โชคลาภบริบูรณ์", "ค้าขายร่ำรวย", "ใจเบิกบาน"] },
-          { artKey: "samantabhadra", motif: "lotus", name: "พระสมันตภัทรโพธิสัตว์ (普賢菩薩)", title: "พระมหาโพธิสัตว์แห่งการปฏิบัติ & ความเพียร", focus: "ลงมือทำสำเร็จ · สัจจะวาจา · การงาน", blessing: "พลังแห่งมหาจริยาจะดลบันดาลให้สิ่งที่ลงมือทำด้วยความเพียรสำเร็จบริบูรณ์ดังตั้งใจ", topics: ["โครงการสำเร็จ", "ความเพียรผลิดอก", "สัจจะบารมี"] },
-          { artKey: "thousand_guanyin", motif: "lotus", name: "พระอวโลกิเตศวรพันกร / พระจุนที (千手觀音)", title: "ปางพันเนตรพันกรทรงช่วยสรรพชีวิตทุกทิศ", astroTag: "เสริมวันศุกร์ (วันเกิดเจ้าของดวง)", focus: "เกื้อกูลรอบด้าน · คลายปัญหาซับซ้อน", blessing: "พระกรนับพันแห่งความกรุณาจะคอยพยุงและคลี่คลายอุปสรรคจากทุกทิศทางให้ปลอดโปร่ง", topics: ["แคล้วคลาดรอบด้าน", "คนเมตตาช่วยเหลือ", "งานราบรื่น"] },
-          { artKey: "ksitigarbha", motif: "halo", name: "พระกษิติครรภ์โพธิสัตว์ (地藏王菩薩)", title: "มหาโพธิสัตว์ผู้ทรงปณิธานปลดเปลื้องวิบาก", focus: "ขอขมากรรม · ปรับพื้นดวง · ร่มเย็น", blessing: "มหากรุณาอันยิ่งใหญ่จะช่วยบรรเทาอุปสรรคติดขัดและอุทิศผลบุญให้พ้นทุกข์ภัยทั้งปวง", topics: ["ปลดล็อกอุปสรรคเก่า", "ทำบุญอุทิศผลบุญ", "คุ้มครองมั่นคง"] }
+          { artKey: "manjushri", gender: "male", motif: "ruyi", name: "พระมัญชุศรีโพธิสัตว์ (文殊菩薩)", title: "พระมหาโพธิสัตว์ผู้เป็นเลิศทางมหาปัญญา", focus: "ปัญญาอันบริสุทธิ์ · การเรียน/กลยุทธ์", blessing: "พระแสงดาบแห่งปัญญาจะตัดความมืดบอดและอวิชชา เปิดแสงสว่างทางความคิดและการตัดสินใจ", topics: ["สติปัญญาเป็นเลิศ", "สอบ/วิจัยสำเร็จ", "มองการณ์ไกล"] },
+          { imgKey: "guanyin", gender: "female", name: "พระแม่กวนอิม กวนซื่ออินผู่ซ่า (觀世音菩薩)", title: "พระมหาโพธิสัตว์ผู้ทรงมหากรุณาฟังเสียงทุกข์แห่งโลก", astroTag: "บารมีเมตตาคลายร้อน (จันทร์ลัคนาพิจิก)", focus: "มหากรุณา · แคล้วคลาด · สุขภาพ & สงบเย็น", blessing: "ด้วยมหากรุณาอันบริสุทธิ์ ขอให้ความทุกข์โศกคลี่คลาย จิตใจสงบเย็น และครอบครัวอยู่เย็นเป็นสุข", topics: ["จิตใจสงบเย็น", "สุขภาพแข็งแรง", "พ้นทุกข์พ้นภัย"] },
+          { artKey: "mahasthamaprapta", gender: "male", motif: "halo", name: "พระมหาสถามปราปต์โพธิสัตว์ (大勢至菩薩)", title: "พระโพธิสัตว์แห่งแสงปัญญาอันตั้งมั่น", focus: "กำลังใจแกร่ง · ฝ่าวิกฤต · สัมฤทธิ์ผล", blessing: "พลังแห่งปัญญาที่ตั้งมั่นจะช่วยให้ก้าวผ่านทุกความท้าทายและตั้งหลักชีวิตได้อย่างมั่นคง", topics: ["พลังใจไม่ย่อท้อ", "ผ่านพ้นวิกฤต", "งานใหญ่สำเร็จ"] },
+          { artKey: "maitreya", gender: "male", motif: "coin5", name: "พระเมตไตรย / พระสังกัจจายน์ (彌勒菩薩)", title: "พระโพธิสัตว์แห่งความเมตตาเบิกบาน & โภคทรัพย์", focus: "โชคลาภมหาศาล · ใจกว้างเป็นสุข · ร่ำรวย", blessing: "รอยยิ้มแห่งพระเมตไตรยจะเปิดรับโชคลาภและความอุดมสมบูรณ์พร้อมจิตใจที่เปี่ยมสุข", topics: ["โชคลาภบริบูรณ์", "ค้าขายร่ำรวย", "ใจเบิกบาน"] },
+          { artKey: "samantabhadra", gender: "male", motif: "lotus", name: "พระสมันตภัทรโพธิสัตว์ (普賢菩薩)", title: "พระมหาโพธิสัตว์แห่งการปฏิบัติ & ความเพียร", focus: "ลงมือทำสำเร็จ · สัจจะวาจา · การงาน", blessing: "พลังแห่งมหาจริยาจะดลบันดาลให้สิ่งที่ลงมือทำด้วยความเพียรสำเร็จบริบูรณ์ดังตั้งใจ", topics: ["โครงการสำเร็จ", "ความเพียรผลิดอก", "สัจจะบารมี"] },
+          { artKey: "thousand_guanyin", gender: "female", motif: "lotus", name: "พระอวโลกิเตศวรพันกร / พระจุนที (千手觀音)", title: "ปางพันเนตรพันกรทรงช่วยสรรพชีวิตทุกทิศ", astroTag: "เสริมวันศุกร์ (วันเกิดเจ้าของดวง)", focus: "เกื้อกูลรอบด้าน · คลายปัญหาซับซ้อน", blessing: "พระกรนับพันแห่งความกรุณาจะคอยพยุงและคลี่คลายอุปสรรคจากทุกทิศทางให้ปลอดโปร่ง", topics: ["แคล้วคลาดรอบด้าน", "คนเมตตาช่วยเหลือ", "งานราบรื่น"] },
+          { artKey: "ksitigarbha", gender: "male", motif: "halo", name: "พระกษิติครรภ์โพธิสัตว์ (地藏王菩薩)", title: "มหาโพธิสัตว์ผู้ทรงปณิธานปลดเปลื้องวิบาก", focus: "ขอขมากรรม · ปรับพื้นดวง · ร่มเย็น", blessing: "มหากรุณาอันยิ่งใหญ่จะช่วยบรรเทาอุปสรรคติดขัดและอุทิศผลบุญให้พ้นทุกข์ภัยทั้งปวง", topics: ["ปลดล็อกอุปสรรคเก่า", "ทำบุญอุทิศผลบุญ", "คุ้มครองมั่นคง"] }
         ]
       },
       buddhas_emperors: {
@@ -954,13 +1579,13 @@
         tag: "ปลดล็อก Tier 6",
         desc: "ลำดับชั้นพระพุทธเจ้ามหายานและสี่จตุรจักรพรรดิสวรรค์ (รวมเสวียนเทียนซ่างตี้ & ซีหวังมู่)",
         deities: [
-          { artKey: "shakyamuni", motif: "halo", name: "พระศากยมุนีพุทธเจ้า / พระยูไล (如來佛祖)", title: "พระบรมศาสดาผู้ตรัสรู้อันเป็นเลิศในไตรภพ", focus: "บารมีธรรมสูงสุด · ปัญญา · สงบนิ่ง", blessing: "พุทธบารมีแห่งองค์พระยูไลจะนำทางชีวิตด้วยสติปัญญา ความร่มเย็น และสิริมงคลอันยิ่งใหญ่", topics: ["สติปัญญานำชีวิต", "ใจสงบตั้งมั่น", "สิริมงคลสูงสุด"] },
-          { artKey: "medicine_buddha", motif: "gourd", name: "พระไภษัชยคุรุพุทธเจ้า (藥師琉璃光佛)", title: "พระพุทธเจ้าผู้ประทานโอสถทิพย์ & สุขภาพ", focus: "บำบัดโรคภัย · สุขภาพแข็งแรง · พ้นภัย", blessing: "รัศมีสีน้ำเงินไพฑูรย์แห่งพระไภษัชยคุรุจะคุ้มครองกายและใจให้แข็งแรงสมบูรณ์ปราศจากโรค", topics: ["สุขภาพกายใจแข็งแรง", "แคล้วคลาดโรคภัย", "ขอพรให้ผู้ใหญ่"] },
-          { imgKey: "xuantian", name: "พระเจ้าเสวียนเทียนซ่างตี้ / ตั่วเหล่าเอี้ย (玄天上帝)", title: "มหาเทพจอมจักรพรรดิทิศอุดรผู้สยบมารจักรวาล", astroTag: "ชั้นแท้แห่งตั่วเหล่าเอี้ย (ปราบราหูกาลกิณี)", focus: "สยบเคราะห์หนัก · คุ้มครองสูงสุด · อำนาจบารมี", blessing: "พระบารมีแท้จริงแห่งองค์เสวียนเทียนซ่างตี้จะปราบสิ่งอัปมงคลทั้งปวงและประทานความมั่นคงอันยิ่งใหญ่", topics: ["สยบเคราะห์/แก้ชงใหญ่", "คุ้มครองระดับสูงสุด", "บารมีมั่นคง"] },
-          { artKey: "ziwei", motif: "star", name: "องค์จื่อเวยต้าตี้ (紫微大帝 · สี่จตุรจักรพรรดิ)", title: "มหาจักรพรรดิดาวเหนือประมุขแห่งหมู่ดาวสวรรค์", focus: "วาสนาผู้นำ · คุมชะตาดาว · เกียรติยศ", blessing: "พระบารมีแห่งดาวจักรพรรดิจื่อเวยจะหนุนนำเกียรติยศ วาสนาผู้นำ และความรุ่งเรืองอันยั่งยืน", topics: ["เสริมบารมีผู้นำ", "วาสนาสูงสุด", "กิจการยืนยง"] },
-          { artKey: "amitabha", motif: "lotus", name: "พระอมิตาภพุทธเจ้า (阿彌陀佛)", title: "พระพุทธเจ้าแห่งแสงสว่างและอายุขัยอันไม่มีประมาณ", focus: "แสงนำทาง · อายุยืน · ความสงบสุข", blessing: "แสงสว่างแห่งพระอมิตาภพุทธะจะขจัดความมืดบอดและนำความสันติสุขสู่ชีวิต", topics: ["แสงสว่างนำทาง", "อายุวัฒนะ", "ชีวิตสงบสุข"] },
-          { artKey: "xiwangmu", motif: "crown", name: "พระนางซีหวังมู่ / เหยาฉือจินหมู่ (瑤池金母)", title: "พระมารดาสวรรค์แดนตะวันตก & ผลท้ออมตะ", focus: "เมตตาอุดมสมบูรณ์ · อายุยืน · เกียรติยศสตรี/ครอบครัว", blessing: "ผลท้อสวรรค์และบารมีพระมารดาจะประทานอายุวัฒนะ โภคทรัพย์ และความสุขในเรือน", topics: ["อายุยืนแข็งแรง", "โภคทรัพย์มั่นคง", "ครอบครัวรุ่งเรือง"] },
-          { artKey: "sanguan", motif: "bagua", name: "สามมหาเทพซานกวานต้าตี้ (三官大帝)", title: "มหาเทพผู้ตรวจฟ้า ดิน และสายน้ำแห่งสวรรค์", focus: "ฟ้าประทานพร · ดินอภัยโทษ · น้ำขจัดภัย", blessing: "เทพฟ้า ดิน น้ำ ทั้งสามพระองค์จงเกื้อหนุนให้พ้นทุกข์ภัยและรับแต่พรชัยอันประเสริฐ", topics: ["ฟ้าประทานพรใหญ่", "ปลดทุกข์ขจัดภัย", "เริ่มต้นใหม่อย่างดี"] }
+          { artKey: "shakyamuni", gender: "male", motif: "halo", name: "พระศากยมุนีพุทธเจ้า / พระยูไล (如來佛祖)", title: "พระบรมศาสดาผู้ตรัสรู้อันเป็นเลิศในไตรภพ", focus: "บารมีธรรมสูงสุด · ปัญญา · สงบนิ่ง", blessing: "พุทธบารมีแห่งองค์พระยูไลจะนำทางชีวิตด้วยสติปัญญา ความร่มเย็น และสิริมงคลอันยิ่งใหญ่", topics: ["สติปัญญานำชีวิต", "ใจสงบตั้งมั่น", "สิริมงคลสูงสุด"] },
+          { artKey: "medicine_buddha", gender: "male", motif: "gourd", name: "พระไภษัชยคุรุพุทธเจ้า (藥師琉璃光佛)", title: "พระพุทธเจ้าผู้ประทานโอสถทิพย์ & สุขภาพ", focus: "บำบัดโรคภัย · สุขภาพแข็งแรง · พ้นภัย", blessing: "รัศมีสีน้ำเงินไพฑูรย์แห่งพระไภษัชยคุรุจะคุ้มครองกายและใจให้แข็งแรงสมบูรณ์ปราศจากโรค", topics: ["สุขภาพกายใจแข็งแรง", "แคล้วคลาดโรคภัย", "ขอพรให้ผู้ใหญ่"] },
+          { imgKey: "xuantian", gender: "male", name: "พระเจ้าเสวียนเทียนซ่างตี้ / ตั่วเหล่าเอี้ย (玄天上帝)", title: "มหาเทพจอมจักรพรรดิทิศอุดรผู้สยบมารจักรวาล", astroTag: "ชั้นแท้แห่งตั่วเหล่าเอี้ย (ปราบราหูกาลกิณี)", focus: "สยบเคราะห์หนัก · คุ้มครองสูงสุด · อำนาจบารมี", blessing: "พระบารมีแท้จริงแห่งองค์เสวียนเทียนซ่างตี้จะปราบสิ่งอัปมงคลทั้งปวงและประทานความมั่นคงอันยิ่งใหญ่", topics: ["สยบเคราะห์/แก้ชงใหญ่", "คุ้มครองระดับสูงสุด", "บารมีมั่นคง"] },
+          { artKey: "ziwei", gender: "male", motif: "star", name: "องค์จื่อเวยต้าตี้ (紫微大帝 · สี่จตุรจักรพรรดิ)", title: "มหาจักรพรรดิดาวเหนือประมุขแห่งหมู่ดาวสวรรค์", focus: "วาสนาผู้นำ · คุมชะตาดาว · เกียรติยศ", blessing: "พระบารมีแห่งดาวจักรพรรดิจื่อเวยจะหนุนนำเกียรติยศ วาสนาผู้นำ และความรุ่งเรืองอันยั่งยืน", topics: ["เสริมบารมีผู้นำ", "วาสนาสูงสุด", "กิจการยืนยง"] },
+          { artKey: "amitabha", gender: "male", motif: "lotus", name: "พระอมิตาภพุทธเจ้า (阿彌陀佛)", title: "พระพุทธเจ้าแห่งแสงสว่างและอายุขัยอันไม่มีประมาณ", focus: "แสงนำทาง · อายุยืน · ความสงบสุข", blessing: "แสงสว่างแห่งพระอมิตาภพุทธะจะขจัดความมืดบอดและนำความสันติสุขสู่ชีวิต", topics: ["แสงสว่างนำทาง", "อายุวัฒนะ", "ชีวิตสงบสุข"] },
+          { artKey: "xiwangmu", gender: "female", motif: "crown", name: "พระนางซีหวังมู่ / เหยาฉือจินหมู่ (瑤池金母)", title: "พระมารดาสวรรค์แดนตะวันตก & ผลท้ออมตะ", focus: "เมตตาอุดมสมบูรณ์ · อายุยืน · เกียรติยศสตรี/ครอบครัว", blessing: "ผลท้อสวรรค์และบารมีพระมารดาจะประทานอายุวัฒนะ โภคทรัพย์ และความสุขในเรือน", topics: ["อายุยืนแข็งแรง", "โภคทรัพย์มั่นคง", "ครอบครัวรุ่งเรือง"] },
+          { artKey: "sanguan", gender: "male", motif: "bagua", name: "สามมหาเทพซานกวานต้าตี้ (三官大帝)", title: "มหาเทพผู้ตรวจฟ้า ดิน และสายน้ำแห่งสวรรค์", focus: "ฟ้าประทานพร · ดินอภัยโทษ · น้ำขจัดภัย", blessing: "เทพฟ้า ดิน น้ำ ทั้งสามพระองค์จงเกื้อหนุนให้พ้นทุกข์ภัยและรับแต่พรชัยอันประเสริฐ", topics: ["ฟ้าประทานพรใหญ่", "ปลดทุกข์ขจัดภัย", "เริ่มต้นใหม่อย่างดี"] }
         ]
       },
       celestial_court: {
@@ -970,13 +1595,13 @@
         tag: "ปลดล็อก Tier 7 สูงสุด",
         desc: "จุดสูงสุดแห่งจักรวาลวิทยาจีน: สามมหาเทพซานชิงต้นกำเนิดเต๋า และองค์เง็กเซียนฮ่องเต้ประมุขฟ้า",
         deities: [
-          { artKey: "yuanshi", motif: "crown", name: "องค์หยวนสื่อเทียนจุน (元始天尊)", title: "มหาเทพองค์แรกแห่งซานชิง ผู้ให้กำเนิดฟ้า-ดิน", focus: "ปฐมพลังจักรวาล · เกียรติยศสูงสุด · เริ่มต้นยิ่งใหญ่", blessing: "ปฐมพลังแห่งหยวนสื่อเทียนจุนจะเปิดศักราชใหม่แห่งความเจริญรุ่งเรืองและความสำเร็จสูงสุด", topics: ["เปิดศักราชใหม่", "วาสนาสูงสุด", "ความสำเร็จยิ่งใหญ่"] },
-          { artKey: "lingbao", motif: "bagua", name: "องค์หลิงเป่าเทียนจุน (靈寶天尊)", title: "มหาเทพองค์ที่สองแห่งซานชิง ผู้คุมกฎหยิน-หยาง", focus: "สมดุลชะตา · ปัญญาลึกซึ้ง · ปรับดวงครบวงจร", blessing: "พลังหยิน-หยางแห่งหลิงเป่าเทียนจุนจะจัดสมดุลชีวิต การงาน และความสัมพันธ์ให้ลงตัวสมบูรณ์", topics: ["สมดุลหยินหยาง", "ปัญญาเหนือชั้น", "ชะตาราบรื่น"] },
-          { artKey: "taishang", motif: "ruyi", name: "ปรมาจารย์ไท่ซ่างเหล่าจวิน (太上老君 · 道德天尊)", title: "มหาเทพองค์ที่สามแห่งซานชิง บรมครูแห่งเต๋า", focus: "ปัญญาอันล้ำลึก · สงบไร้กังวล · ยั่งยืน", blessing: "วิถีแห่งเต๋าและความสงบนิ่งอันล้ำลึกจะนำพาให้ก้าวหน้าอย่างมั่นคงเป็นธรรมชาติ", topics: ["ปัญญาเต๋า", "ธุรกิจยั่งยืน", "ใจสงบเหนือปัญหา"] },
-          { artKey: "hongjun", motif: "halo", name: "องค์หงจวินเหล่าจู่ (鴻鈞老祖)", title: "บรมครูแห่งมหาเทพซานชิงทั้งสาม", focus: "บารมีเหนือบารมี · ปัญญารอบรู้ · ความมั่นคง", blessing: "เมตตาธรรมแห่งบรมครูโบราณจะประคองดวงชะตาให้มั่นคงและรุ่งเรืองเหนืออุปสรรค", topics: ["บารมีผู้ใหญ่สูงสุด", "ปัญญารอบด้าน", "มั่นคงตลอดไป"] },
-          { artKey: "donghuang", motif: "star", name: "องค์ตงหวงไท่อี (東皇太一)", title: "มหาเทพสวรรค์บูรพาผู้ทรงฤทธิ์แห่งยุคบรรพกาล", focus: "อำนาจสร้างสรรค์ · เดชานุภาพ · ธาตุไม้บูรพา", blessing: "พลังตะวันออกแห่งตงหวงไท่อีจะปลุกธาตุไม้แห่งการเติบโตให้ผลิบานเต็มกำลัง", topics: ["เติบโตก้าวกระโดด", "เดชานุภาพผู้นำ", "เปิดทางใหญ่"] },
-          { artKey: "nuwa", motif: "lotus", name: "เจ้าแม่หนี่ว์วา & จิ่วเทียนเสวียนหนี่ว์ (女媧 · 九天玄女)", title: "พระมารดาผู้สร้างโลก & เทพธิดาสวรรค์ชั้นเก้า", focus: "กลยุทธ์ชัยชนะ · ปรับชะตา · สิริมงคล", blessing: "พระมารดาหนี่ว์วาจะซ่อมแซมส่วนที่ขาดและเทพธิดาชั้นเก้าจะประทานกลยุทธ์แห่งชัยชนะ", topics: ["ซ่อมเสริมชะตา", "กลยุทธ์ชัยชนะ", "เมตตาอุดมสมบูรณ์"] },
-          { artKey: "jade_emperor", motif: "crown", name: "องค์เง็กเซียนฮ่องเต้ (玉皇大帝 · ประมุขฟ้า)", title: "มหาจักรพรรดิสูงสุดแห่งสวรรค์บนยอดเจดีย์ 7 ชั้น", focus: "ขอพรครบทุกด้าน · บารมีสูงสุด · สิริมงคลสมบูรณ์", blessing: "พระบารมีแห่งราชาสวรรค์บนยอดเจดีย์ 7 ชั้น จงประทานพรชัยมงคลทั้งการงาน การเงิน สุขภาพ และวาสนาบารมีครบถ้วน", topics: ["ขอพรใหญ่ครบทุกด้าน", "เสริมบารมีสูงสุด", "ร่มเย็นเป็นสุขตลอดปี"] }
+          { artKey: "yuanshi", gender: "male", motif: "crown", name: "องค์หยวนสื่อเทียนจุน (元始天尊)", title: "มหาเทพองค์แรกแห่งซานชิง ผู้ให้กำเนิดฟ้า-ดิน", focus: "ปฐมพลังจักรวาล · เกียรติยศสูงสุด · เริ่มต้นยิ่งใหญ่", blessing: "ปฐมพลังแห่งหยวนสื่อเทียนจุนจะเปิดศักราชใหม่แห่งความเจริญรุ่งเรืองและความสำเร็จสูงสุด", topics: ["เปิดศักราชใหม่", "วาสนาสูงสุด", "ความสำเร็จยิ่งใหญ่"] },
+          { artKey: "lingbao", gender: "male", motif: "bagua", name: "องค์หลิงเป่าเทียนจุน (靈寶天尊)", title: "มหาเทพองค์ที่สองแห่งซานชิง ผู้คุมกฎหยิน-หยาง", focus: "สมดุลชะตา · ปัญญาลึกซึ้ง · ปรับดวงครบวงจร", blessing: "พลังหยิน-หยางแห่งหลิงเป่าเทียนจุนจะจัดสมดุลชีวิต การงาน และความสัมพันธ์ให้ลงตัวสมบูรณ์", topics: ["สมดุลหยินหยาง", "ปัญญาเหนือชั้น", "ชะตาราบรื่น"] },
+          { artKey: "taishang", gender: "male", motif: "ruyi", name: "ปรมาจารย์ไท่ซ่างเหล่าจวิน (太上老君 · 道德天尊)", title: "มหาเทพองค์ที่สามแห่งซานชิง บรมครูแห่งเต๋า", focus: "ปัญญาอันล้ำลึก · สงบไร้กังวล · ยั่งยืน", blessing: "วิถีแห่งเต๋าและความสงบนิ่งอันล้ำลึกจะนำพาให้ก้าวหน้าอย่างมั่นคงเป็นธรรมชาติ", topics: ["ปัญญาเต๋า", "ธุรกิจยั่งยืน", "ใจสงบเหนือปัญหา"] },
+          { artKey: "hongjun", gender: "male", motif: "halo", name: "องค์หงจวินเหล่าจู่ (鴻鈞老祖)", title: "บรมครูแห่งมหาเทพซานชิงทั้งสาม", focus: "บารมีเหนือบารมี · ปัญญารอบรู้ · ความมั่นคง", blessing: "เมตตาธรรมแห่งบรมครูโบราณจะประคองดวงชะตาให้มั่นคงและรุ่งเรืองเหนืออุปสรรค", topics: ["บารมีผู้ใหญ่สูงสุด", "ปัญญารอบด้าน", "มั่นคงตลอดไป"] },
+          { artKey: "donghuang", gender: "male", motif: "star", name: "องค์ตงหวงไท่อี (東皇太一)", title: "มหาเทพสวรรค์บูรพาผู้ทรงฤทธิ์แห่งยุคบรรพกาล", focus: "อำนาจสร้างสรรค์ · เดชานุภาพ · ธาตุไม้บูรพา", blessing: "พลังตะวันออกแห่งตงหวงไท่อีจะปลุกธาตุไม้แห่งการเติบโตให้ผลิบานเต็มกำลัง", topics: ["เติบโตก้าวกระโดด", "เดชานุภาพผู้นำ", "เปิดทางใหญ่"] },
+          { artKey: "nuwa", gender: "female", motif: "lotus", name: "เจ้าแม่หนี่ว์วา & จิ่วเทียนเสวียนหนี่ว์ (女媧 · 九天玄女)", title: "พระมารดาผู้สร้างโลก & เทพธิดาสวรรค์ชั้นเก้า", focus: "กลยุทธ์ชัยชนะ · ปรับชะตา · สิริมงคล", blessing: "พระมารดาหนี่ว์วาจะซ่อมแซมส่วนที่ขาดและเทพธิดาชั้นเก้าจะประทานกลยุทธ์แห่งชัยชนะ", topics: ["ซ่อมเสริมชะตา", "กลยุทธ์ชัยชนะ", "เมตตาอุดมสมบูรณ์"] },
+          { artKey: "jade_emperor", gender: "male", motif: "crown", name: "องค์เง็กเซียนฮ่องเต้ (玉皇大帝 · ประมุขฟ้า)", title: "มหาจักรพรรดิสูงสุดแห่งสวรรค์บนยอดเจดีย์ 7 ชั้น", focus: "ขอพรครบทุกด้าน · บารมีสูงสุด · สิริมงคลสมบูรณ์", blessing: "พระบารมีแห่งราชาสวรรค์บนยอดเจดีย์ 7 ชั้น จงประทานพรชัยมงคลทั้งการงาน การเงิน สุขภาพ และวาสนาบารมีครบถ้วน", topics: ["ขอพรใหญ่ครบทุกด้าน", "เสริมบารมีสูงสุด", "ร่มเย็นเป็นสุขตลอดปี"] }
         ]
       }
     };
@@ -1445,7 +2070,7 @@
 
       const thumbEl = document.getElementById("modal-deity-thumb");
       if (thumbEl && log.deity) {
-        thumbEl.innerHTML = renderDeityVisual(log.deity, log.dayMeta || DAY_META[state.todayDay], "w-full h-full");
+        thumbEl.innerHTML = renderDeityVisual(log.deity, log.dayMeta || DAY_META[state.todayDay], "w-full h-full", { compact: true });
       }
 
       document.getElementById("modal-deity-name").textContent = `สักการะ ${log.deityName} สำเร็จ`;
@@ -2391,22 +3016,16 @@
             isSel ? "bg-amber-500/10" : "hover:bg-[var(--card)]"
           }">
             <div class="flex items-center gap-2.5 min-w-0">
-              ${hasPortrait ? `
-                <div class="w-9 h-9 rounded-lg overflow-hidden border border-amber-500/50 bg-red-950 shrink-0 flex items-center justify-center">
-                  ${renderDeityVisual(deity, d, "w-full h-full")}
-                </div>
-              ` : `
-                <div class="w-9 h-9 rounded-lg border border-red-700/60 bg-red-950/70 shrink-0 flex items-center justify-center text-[11px] font-bold text-amber-300">
-                  ${d.short}
-                </div>
-              `}
+              <div class="w-10 h-10 rounded-lg overflow-hidden border ${hasPortrait ? "border-amber-500/70" : "border-amber-500/40"} bg-red-950 shrink-0 flex items-center justify-center">
+                ${renderDeityVisual(deity, d, "w-full h-full", { compact: true })}
+              </div>
               <div class="min-w-0">
                 <div class="flex flex-wrap items-center gap-1.5">
                   <span class="w-2 h-2 rounded-full shrink-0" style="background:${d.hex}"></span>
                   <span class="text-xs font-bold">${d.name} (${d.colorName})</span>
                   ${idx === 5 && pantheon.id === "bazi_personal" ? '<span class="text-[11px] px-1.5 rounded bg-red-700/25 text-amber-300 border border-amber-500/35">วันเกิด · เจ้าแม่ทับทิม</span>' : ''}
                   ${idx === state.todayDay ? '<span class="text-[11px] px-1.5 rounded bg-emerald-500/15 text-emerald-500">วันนี้</span>' : ''}
-                  ${!hasPortrait ? '<span class="text-[10px] px-1.5 rounded bg-amber-500/15 text-amber-400">เตรียมภาพเฟสถัดไป</span>' : ''}
+                  ${!hasPortrait ? `<span class="text-[10px] px-1.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">${deity.gender === 'female' ? '♀ เทพสตรี · Dummy' : '♂ เทพบุรุษ · Dummy'}</span>` : ''}
                 </div>
                 <p class="text-xs text-[var(--muted-foreground)] truncate">${deity.name} — ${deity.focus}</p>
                 ${deity.astroTag ? `<p class="text-[11px] text-amber-500 truncate mt-0.5">${deity.astroTag}</p>` : ''}
@@ -2645,128 +3264,78 @@
       `;
     }
 
-    function renderFloorLockedView() {
-      const el = document.getElementById("floor-locked-view");
-      const targetFloor = state.activeFloor;
+    function renderFloorUnlockGate(targetFloor) {
+      const el = document.getElementById("floor-unlock-gate");
+      if (!el) return;
       const floorInfo = getFloorInfo(targetFloor);
       const reqWorship = floorInfo.reqWorship || 7;
       const reqPoints = floorInfo.reqPoints || 100;
       const pctWorship = Math.min(100, Math.round((state.worshipCount / reqWorship) * 100));
       const pctPoints = Math.min(100, Math.round((state.points / reqPoints) * 100));
-      const sneakPantheon = PANTHEONS[floorInfo.pantheonKey] || PANTHEONS.generals_wealth;
       const isNextTier = targetFloor === state.userTier + 1;
       const bundlePrice = getSequentialBundlePrice(targetFloor);
 
-      // Stepper nodes showing sequential ascension path from Tier 1 to Target Floor
       const trailHtml = [1, 2, 3, 4, 5, 6, 7].map(f => {
         let dotCls = "bg-[var(--content)] text-[var(--muted-foreground)] border-[var(--border)]";
         if (f <= state.userTier && (state.mvpPhase >= 3 || f === 1)) {
-          dotCls = "bg-emerald-500/20 text-emerald-500 border-emerald-500/50";
+          dotCls = "bg-emerald-500/20 text-emerald-400 border-emerald-500/50";
         } else if (f === targetFloor) {
-          dotCls = "bg-amber-500 text-stone-950 border-amber-400 font-bold";
+          dotCls = "bg-amber-400 text-stone-950 border-amber-200 font-bold";
         } else if (state.mvpPhase >= 3 && f === state.userTier + 1) {
-          dotCls = "bg-amber-500/20 text-amber-400 border-amber-500/60";
+          dotCls = "bg-amber-500/20 text-amber-300 border-amber-500/60";
         }
         return `<span class="w-6 h-6 rounded-full border text-[10px] font-bold flex items-center justify-center shrink-0 ${dotCls}">${f}F</span>`;
-      }).join(`<span class="text-[10px] text-[var(--muted-foreground)]">›</span>`);
+      }).join(`<span class="text-[10px] text-amber-400/70">›</span>`);
 
-      const floorUnlocked = isFloorUnlocked(targetFloor);
       el.innerHTML = `
-        <div class="rounded-2xl bg-gradient-to-b from-red-950/50 via-[var(--card)] to-red-950/25 border-2 border-red-700/70 p-4 text-center space-y-3">
-          <!-- Ascension Trail Header -->
-          <div class="flex items-center justify-center gap-1 py-1 overflow-x-auto">
+        <div class="rounded-2xl bg-gradient-to-b from-red-950/85 via-[var(--card)] to-amber-950/30 border-2 border-amber-500/60 p-3.5 space-y-2.5 shadow-lg">
+          <div class="flex items-center justify-center gap-1 overflow-x-auto pb-0.5">
             ${trailHtml}
           </div>
-
-          <div class="space-y-1">
-            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
-              floorUnlocked
-                ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
-                : (state.mvpPhase < 3
-                  ? "bg-amber-500/15 text-amber-400 border border-amber-500/35"
-                  : (isNextTier ? "bg-amber-500/20 text-amber-400 border border-amber-500/45" : "bg-red-500/15 text-red-400 border border-red-500/35"))
-            }">
-              ${floorUnlocked
-                ? `🎊 ปลดล็อกสิทธิ์ Tier ${targetFloor} แล้ว · หอเทพเฟสถัดไป`
-                : (state.mvpPhase < 3
-                  ? `เจดีย์ชั้น ${targetFloor}/7 · เปิดในเฟสถัดไป (ตอนนี้เปิดชั้น 1 ก่อน)`
-                  : (isNextTier ? `🔓 ชั้นถัดไปของคุณ · เลื่อนจาก Tier ${state.userTier} → ${targetFloor}` : `🔒 ต้องผ่าน Tier ${state.userTier + 1}..${targetFloor - 1} ก่อน`))}
+          <div class="text-center space-y-1">
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/55">
+              ${state.mvpPhase < 3
+                ? `👑 โหมดชมวิหารชั้น ${targetFloor}/7 (สลับ MVP 3 เพื่อปลดล็อกจุดธูป)`
+                : (isNextTier ? `🔓 ชั้นถัดไปของคุณ · ปลดล็อกสิทธิ์จุดธูปชั้น ${targetFloor}` : `🔒 ต้องปลดล็อกตามลำดับ Tier ${state.userTier + 1}..${targetFloor - 1} ก่อน`)}
             </span>
-            <h3 class="text-base font-bold">${floorInfo.title}</h3>
-            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">${floorInfo.desc}</p>
-            <div class="text-[11px] font-semibold text-amber-500">✨ ${floorInfo.perk}</div>
+            <p class="text-[11px] font-semibold text-amber-400">✨ ${floorInfo.perk}</p>
           </div>
 
-          <!-- Upcoming Phase Portrait Notice + Clean Sacred Roster (Real Portraits where ready, zero SVG Icons) -->
-          <div class="rounded-xl bg-red-950/40 border border-amber-500/35 p-3 text-left space-y-2">
-            ${(() => {
-              const readyCount = sneakPantheon.deities.filter(d => d.imgKey && DEITY_PORTRAITS[d.imgKey]).length;
-              return `
-                <div class="flex items-center justify-between gap-2">
-                  <span class="text-[11px] font-bold text-amber-300">📜 ทำเนียบองค์เทพในแผนชั้น ${targetFloor} (เฟสถัดไป)</span>
-                  <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${readyCount > 0 ? "bg-emerald-700/80 text-emerald-100 border border-emerald-400/50" : "bg-red-800/75 text-amber-200 border border-amber-500/40"} shrink-0">
-                    ${readyCount > 0 ? `ภาพจริงแล้ว ${readyCount}/7 องค์` : "รอภาพ Portrait จริง"}
-                  </span>
-                </div>
-                <div class="space-y-1 max-h-44 overflow-y-auto thin-scroll">
-                  ${sneakPantheon.deities.map((d, i) => {
-                    const hasImg = Boolean(d.imgKey && DEITY_PORTRAITS[d.imgKey]);
-                    return `
-                      <div class="px-2 py-1.5 rounded-lg bg-[var(--content)]/80 border border-[var(--card-border)] flex items-center justify-between gap-2 text-[11px]">
-                        ${hasImg
-                          ? `<img src="${DEITY_PORTRAITS[d.imgKey]}" alt="${d.name}" class="w-7 h-7 rounded-md object-cover border border-amber-400/60 shrink-0" />`
-                          : `<span class="w-7 h-7 rounded-md bg-red-950/70 border border-amber-500/30 text-[10px] font-bold text-amber-400 flex items-center justify-center shrink-0">${DAY_META[i].short}</span>`}
-                        <span class="font-bold text-amber-400 shrink-0">${DAY_META[i].short}</span>
-                        <span class="truncate text-[var(--foreground)] flex-1">${d.name}</span>
-                        <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${hasImg ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/15 text-amber-300/80"}">${hasImg ? "มีภาพแล้ว" : "รอภาพ"}</span>
-                      </div>
-                    `;
-                  }).join("")}
-                </div>
-              `;
-            })()}
-          </div>
-
-          <!-- Free Organic Progression Criteria -->
-          <div class="rounded-xl bg-[var(--content)] border border-[var(--border)] p-3 text-left space-y-2">
-            <div class="text-[11px] font-bold text-[var(--foreground)]">เกณฑ์ปลดล็อกชั้น ${targetFloor} (${floorInfo.rankName})</div>
-            <div class="space-y-1">
-              <div class="flex items-center justify-between text-xs">
-                <span class="font-medium">วิธีที่ 1: สักการะสะสมครบ ${reqWorship} ครั้ง</span>
-                <span class="font-bold text-amber-500">${state.worshipCount}/${reqWorship}</span>
-              </div>
-              <div class="w-full h-1.5 rounded-full bg-[var(--card)] overflow-hidden">
-                <div class="h-full bg-amber-500" style="width:${pctWorship}%"></div>
-              </div>
+          <div class="rounded-xl bg-[var(--content)]/90 border border-amber-500/35 p-2.5 space-y-1.5 text-left">
+            <div class="flex items-center justify-between text-[11px]">
+              <span>เกณฑ์ปลดล็อกฟรี · ไหว้สะสม</span>
+              <span class="font-bold text-amber-400">${state.worshipCount}/${reqWorship} ครั้ง</span>
             </div>
-            <div class="space-y-1">
-              <div class="flex items-center justify-between text-xs">
-                <span class="font-medium">วิธีที่ 2: สะสมแต้มบุญครบ ${reqPoints} แต้ม</span>
-                <span class="font-bold text-emerald-500">${state.points}/${reqPoints}</span>
-              </div>
-              <div class="w-full h-1.5 rounded-full bg-[var(--card)] overflow-hidden">
-                <div class="h-full bg-emerald-500" style="width:${pctPoints}%"></div>
-              </div>
+            <div class="w-full h-1.5 rounded-full bg-[var(--card)] overflow-hidden">
+              <div class="h-full bg-amber-400" style="width:${pctWorship}%"></div>
+            </div>
+            <div class="flex items-center justify-between text-[11px] pt-0.5">
+              <span>หรือ แต้มบุญสะสม</span>
+              <span class="font-bold text-emerald-400">${state.points}/${reqPoints} แต้ม</span>
+            </div>
+            <div class="w-full h-1.5 rounded-full bg-[var(--card)] overflow-hidden">
+              <div class="h-full bg-emerald-400" style="width:${pctPoints}%"></div>
             </div>
           </div>
 
-          <button onclick="setFloor(1)" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-red-700 to-amber-600 text-amber-50 border border-amber-400/65 text-xs font-bold cursor-pointer shadow">
-            ⛩️ กลับไปสักการะชั้น 1 (ภาพเทพจริงครบ 7 วัน) →
-          </button>
-
-          ${!floorUnlocked && state.mvpPhase >= 3 ? `
-            <div class="space-y-2">
-              ${isNextTier ? `
-                <button onclick="startUpgradeFloor(${targetFloor}, 'single')" class="w-full py-2 rounded-xl bg-[var(--content)] border border-amber-500/45 text-amber-300 text-xs font-bold cursor-pointer">
-                  👑 ทดลองอัปเกรดล่วงหน้า Tier ${targetFloor} (${floorInfo.upgradePrice} ฿)
-                </button>
-              ` : `
-                <button onclick="startUpgradeFloor(${targetFloor}, 'bundle')" class="w-full py-2 rounded-xl bg-[var(--content)] border border-amber-500/45 text-amber-300 text-xs font-bold cursor-pointer">
-                  👑 ทดลองอัปเกรดเหมาชั้น ${state.userTier + 1}→${targetFloor} (${bundlePrice} ฿)
-                </button>
-              `}
-            </div>
-          ` : ""}
+          <div class="space-y-1.5">
+            ${state.mvpPhase >= 3 ? (isNextTier ? `
+              <button onclick="startUpgradeFloor(${targetFloor}, 'single')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-stone-950 font-extrabold text-xs cursor-pointer shadow">
+                👑 ปลดล็อกสิทธิ์สักการะชั้น ${targetFloor} ทันที (${floorInfo.upgradePrice} ฿)
+              </button>
+            ` : `
+              <button onclick="startUpgradeFloor(${targetFloor}, 'bundle')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-stone-950 font-extrabold text-xs cursor-pointer shadow">
+                👑 ปลดล็อกเหมาลำดับชั้น ${state.userTier + 1}→${targetFloor} (${bundlePrice} ฿)
+              </button>
+            `) : `
+              <button onclick="setMvpPhase(3)" class="w-full py-2 rounded-xl bg-amber-500/20 border border-amber-400/60 text-amber-300 font-bold text-xs cursor-pointer">
+                ✨ เปิดโหมดเจดีย์ 7 ชั้นเต็มระบบ (MVP 3)
+              </button>
+            `}
+            <button onclick="setFloor(1)" class="w-full py-2 rounded-xl bg-red-950/80 hover:bg-red-900 border border-amber-500/40 text-amber-200 text-[11px] font-bold cursor-pointer">
+              ⛩️ กลับไปสะสมแต้มที่วิหารชั้น 1
+            </button>
+          </div>
         </div>
       `;
     }
@@ -2775,21 +3344,21 @@
       renderFloorSwitcher();
       const lockedView = document.getElementById("floor-locked-view");
       const activeView = document.getElementById("floor-active-view");
+      const unlockGate = document.getElementById("floor-unlock-gate");
+      const offeringsSlot = document.getElementById("offerings-slot");
+      const worshipCtaBox = document.getElementById("worship-cta-box");
+      const wishInput = document.getElementById("wish-input");
 
-      // Phase 1 active scope: Floor 1 has all 7 real painted portraits; Floors 2-7 display roadmap sanctuary
-      if (state.activeFloor > 1) {
-        lockedView.classList.remove("hidden");
-        activeView.classList.add("hidden");
-        renderFloorLockedView();
-        return;
-      }
-
-      lockedView.classList.add("hidden");
+      if (lockedView) lockedView.classList.add("hidden");
       activeView.classList.remove("hidden");
 
       const pantheon = getActivePantheon();
+      const unlocked = isFloorUnlocked(state.activeFloor);
       const d = DAY_META[state.selectedDay];
       const deity = pantheon.deities[state.selectedDay];
+
+      // Progressive Luxury Temple Architecture (1F -> 7F)
+      applyFloorLuxuryTheme(state.activeFloor, unlocked, pantheon);
 
       // Plaque title dynamically across all 7 pagoda floors
       const plaqueEl = document.getElementById("altar-plaque-title");
@@ -2812,23 +3381,25 @@
       if (state.selectedDay !== state.todayDay) backTodayBtn.classList.remove("hidden");
       else backTodayBtn.classList.add("hidden");
 
-      // 7-Day Strip (Real Deity Thumbnails, Static Fast-Load)
+      // 7-Day Strip (Clear portraits + Male/Female Graphic Dummy Thumbnails across Floors 1..7)
       document.getElementById("day-strip").innerHTML = DAY_META.map((day, idx) => {
         const isSel = idx === state.selectedDay;
         const isToday = idx === state.todayDay;
-        const isStamped = state.stampedDays.includes(idx);
+        const isStamped = state.activeFloor === 1 && state.stampedDays.includes(idx);
         const dayDeity = pantheon.deities[idx];
+        const hasReal = Boolean(dayDeity && dayDeity.imgKey && DEITY_PORTRAITS[dayDeity.imgKey]);
         return `
-          <button onclick="selectDay(${idx})" class="py-1 px-0.5 rounded-xl border flex flex-col items-center justify-center gap-0.5 cursor-pointer ${
+          <button onclick="selectDay(${idx})" class="py-1 px-0.5 rounded-xl border flex flex-col items-center justify-center gap-0.5 cursor-pointer relative ${
             isSel
-              ? "bg-red-900/30 border-amber-500 shadow-sm"
-              : "bg-[var(--card)]/70 border-[var(--border)] opacity-85 hover:opacity-100"
+              ? (state.activeFloor >= 5 ? "bg-amber-500/20 border-amber-300 shadow-md" : "bg-red-900/40 border-amber-400 shadow-sm")
+              : "bg-[var(--card)]/75 border-[var(--border)] opacity-85 hover:opacity-100"
           }">
-            <div class="w-7 h-7 rounded-lg overflow-hidden border bg-red-950 flex items-center justify-center ${isSel ? "border-amber-400" : "border-red-700/75"}">
-              ${renderDeityVisual(dayDeity, day, "w-full h-full")}
+            <div class="w-9 h-9 rounded-lg overflow-hidden border bg-red-950 flex items-center justify-center relative ${isSel ? "border-amber-300" : "border-red-700/75"}">
+              ${renderDeityVisual(dayDeity, day, "w-full h-full", { compact: true })}
+              ${!hasReal ? `<span class="absolute top-0 right-0 px-0.5 text-[7px] leading-tight font-bold rounded-bl bg-red-950/90 text-amber-200">${dayDeity.gender === "female" ? "♀" : "♂"}</span>` : ""}
             </div>
-            <span class="text-[11px] font-bold leading-tight">${day.short}</span>
-            <span class="text-[9px] leading-none">${isStamped ? "✅" : (isToday ? "•วันนี้" : "ดู")}</span>
+            <span class="text-[10px] font-bold leading-tight">${day.short}</span>
+            <span class="text-[9px] leading-none">${isStamped ? "✅" : (isToday ? "•วันนี้" : "ชม")}</span>
           </button>
         `;
       }).join("");
@@ -2840,17 +3411,18 @@
 
       const todayBadge = document.getElementById("today-indicator");
       if (state.selectedDay === state.todayDay) {
+        todayBadge.classList.remove("hidden");
         todayBadge.textContent = "องค์ประจำวันนี้";
         todayBadge.className = "px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-500 border border-emerald-500/30";
       } else {
-        todayBadge.textContent = "ดูข้อมูลล่วงหน้า";
+        todayBadge.classList.remove("hidden");
+        todayBadge.textContent = "ชมองค์เทพ";
         todayBadge.className = "px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--content)] text-[var(--muted-foreground)] border border-[var(--border)]";
       }
 
-      // Render Chinese Deity Portrait Image (Unified Crimson & Gold Shrine Frame)
+      // Render Large Center Deity Visual (Real Painted Portrait or Male/Female Graphic Dummy)
       const portraitFrame = document.getElementById("deity-portrait-frame");
-      portraitFrame.style.borderColor = "#f59e0b";
-      portraitFrame.innerHTML = renderDeityVisual(deity, d, "w-full h-full rounded-xl");
+      portraitFrame.innerHTML = renderDeityVisual(deity, d, "w-full h-full rounded-xl", { compact: false });
 
       document.getElementById("deity-name").textContent = deity.name;
       document.getElementById("deity-title").textContent = deity.title;
@@ -2869,14 +3441,28 @@
         return `
           <button onclick="selectTopic(${idx})" class="px-2.5 py-1 rounded-full text-xs border cursor-pointer ${
             active
-              ? "bg-amber-500/20 text-amber-500 border-amber-500/50 font-semibold"
+              ? "bg-amber-500/20 text-amber-400 border-amber-400/60 font-semibold"
               : "bg-[var(--content)] text-[var(--muted-foreground)] border-[var(--border)] hover:text-[var(--foreground)]"
           }">${t}</button>
         `;
       }).join("");
 
-      renderOfferingsSlot();
-      renderWorshipButton();
+      if (unlocked) {
+        if (unlockGate) unlockGate.classList.add("hidden");
+        if (wishInput) wishInput.classList.remove("hidden");
+        if (offeringsSlot) offeringsSlot.classList.remove("hidden");
+        if (worshipCtaBox) worshipCtaBox.classList.remove("hidden");
+        renderOfferingsSlot();
+        renderWorshipButton();
+      } else {
+        if (wishInput) wishInput.classList.add("hidden");
+        if (offeringsSlot) offeringsSlot.classList.add("hidden");
+        if (worshipCtaBox) worshipCtaBox.classList.add("hidden");
+        if (unlockGate) {
+          unlockGate.classList.remove("hidden");
+          renderFloorUnlockGate(state.activeFloor);
+        }
+      }
     }
 
     function renderOfferingsSlot() {
